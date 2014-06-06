@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="ZHANG Xiaowei" />
+  <title>Introduction to Bayesian Data Analysis</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="reveal.js/css/reveal.min.css"/>
+    <style type="text/css">code{white-space: pre;}</style>
+    <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #303030; color: #cccccc; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #cccccc; background-color: #303030; }
+code > span.kw { color: #f0dfaf; }
+code > span.dt { color: #dfdfbf; }
+code > span.dv { color: #dcdccc; }
+code > span.bn { color: #dca3a3; }
+code > span.fl { color: #c0bed1; }
+code > span.ch { color: #dca3a3; }
+code > span.st { color: #cc9393; }
+code > span.co { color: #7f9f7f; }
+code > span.ot { color: #efef8f; }
+code > span.al { color: #ffcfaf; }
+code > span.fu { color: #efef8f; }
+code > span.er { color: #c3bf9f; }
+    </style>
+    <link rel="stylesheet" href="reveal.js/css/theme/simple.css" id="theme">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+    <!--[if lt IE 9]>
+    <script src="reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+        if( window.location.search.match( /print-pdf/gi ) ) {
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'reveal.js/css/print/pdf.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        }
+    </script>
+    
+    <style type="text/css">
+        /*.reveal h1 { font-size: 2.0em; }
+        .reveal h2 { font-size: 1.75em; }
+        .reveal h3 { font-size: 1.5em; }
+        .reveal h4 { font-size: 1.0em; }*/
+    
+        .reveal h1 { font-size: 1.6em; }
+        .reveal h2 { font-size: 1.3em; }
+        .reveal h3 { font-size: 1.2em; }
+        .reveal h4 { font-size: 1.0em; }
+    
+        .reveal p { text-align: left; }
+        
+        .reveal pre.sourceCode {
+            line-height: 1.2em;
+            padding: 6px;
+            /*font-size: .7em;*/
+            /*width: 97%;*/
+        }
+        .reveal code {
+            line-height: 1.7em;
+            /*font-size: .7em;*/
+            padding: 6px;
+        }
+        .reveal pre.sourceCode code {
+            /*font-size: 1em;
+            background: none;*/
+            padding: 6px;
+        }
+        .reveal code,
+        .reveal .sourceCode code,
+        /*.reveal .sourceCode .ot {
+            color: #61FF0D;
+        }
+        .reveal .sourceCode .dv,
+        .reveal .sourceCode .st {
+            color: #FFFC19;
+        }
+        .reveal .sourceCode .fu {
+            color: #FF530D;
+        }
+        .reveal .sourceCode .co {
+            color: #71E9F4;
+        }*/
+    </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Introduction to Bayesian Data Analysis</h1>
+    <h2 class="author">ZHANG Xiaowei</h2>
+    <h3 class="date">HKUST</h3>
+</section>
+
+<section id="self-introduction-张晓炜" class="slide level2">
+<h1>Self-introduction (张晓炜)</h1>
+<ul>
+<li>Education
+<ul>
+<li>Ph.D. in Operations Research, Stanford University, 2011</li>
+<li>B.S. in Mathematics, Nankai University, 2006<br /></li>
+</ul></li>
+<li>Research
+<ul>
+<li>stochastic simulation</li>
+<li>data-based service engineering</li>
+</ul></li>
+</ul>
+</section>
+<section><section id="overview" class="titleslide slide level1"><h1>Overview</h1></section><section class="slide level2">
+
+<h3 id="part-1.-fundamentals-of-bayesian-inference">Part 1. Fundamentals of Bayesian Inference</h3>
+<ul>
+<li><p>What and why?</p></li>
+<li><p>One-parameter models</p>
+<ul>
+<li>Binomial model</li>
+<li>Poisson model</li>
+<li>Exponential family and conjugate priors</li>
+</ul></li>
+<li><p>Normal model</p>
+<ul>
+<li>Infer mean with known variance</li>
+<li>Jointly infer mean and variance</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="part-2.-monte-carlo-methods">Part 2. Monte Carlo Methods</h3>
+<ul>
+<li>Baisc Monte Carlo
+<ul>
+<li>Monte Carlo integration</li>
+<li>Random variable generation</li>
+</ul></li>
+<li><p>Markov chain Monte Carlo</p>
+<ul>
+<li>Slice sampler</li>
+<li>Metropolis-Hastings algorithms<br /></li>
+<li>Gibbs sampler</li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="what-and-why" class="titleslide slide level1"><h1>1. What and Why?</h1></section><section id="probability" class="slide level2">
+<h1>Probability</h1>
+<ul>
+<li><p>I have 50% probability of getting a head when flipping a coin</p></li>
+<li><p>An Olympic shooter has 95% probability of hitting the target</p></li>
+<li><p>Weather forecast indicates 80% probability of raining tomorrow</p></li>
+<li><p>A cancer patient was told that he had 60% chance of surviving for at least 5 years</p></li>
+<li>There are two possible ways to interpret probability
+<ul>
+<li>Frequency</li>
+<li>Belief</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="frequency">Frequency</h3>
+<ul>
+<li>Classical.</li>
+<li>Example. We expect to get a head about half the time if we flip a coin many many times</li>
+<li><p>However, repeated experiments are not possible in many situations</p>
+<ul>
+<li>What is the probability that another terrorist attack of the “9-11” scale would happen in 10 years?</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="belief">Belief</h3>
+<ul>
+<li>Quantifies a particular person’s subjective opinion as to how likely an event is to occur</li>
+<li>Not limited to repeatable events</li>
+<li><p>Different people have different probabilities regarding the same event</p>
+<ul>
+<li>This is part of the reason why Bayesian statistics is controversial</li>
+<li>Many people insist that probability should be <em>objective</em></li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>The same person’s subjective probability is likely to change as more information becomes available</p>
+<ul>
+<li>Bayes’ rule stipulates how one should update his belief with new information</li>
+<li>Bayesian learning is a mathematical formulation of this process</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Here are several statements about John. After reading them, what is your belief regarding whether he is a thief?</p>
+<ul>
+<li>He was wearing a mask standing in front of a jewelry store</li>
+<li>An alarm was set off at the same time</li>
+<li>He was the owner of the store
+<ul>
+<li>He just return from a masquerade party</li>
+<li>He didn’t have the key with him</li>
+</ul></li>
+</ul></li>
+</ul>
+</section><section id="bayes-rule" class="slide level2">
+<h1>Bayes’ Rule</h1>
+<ul>
+<li><p>There are two quantities of central interest</p>
+<ul>
+<li><span class="math">\(\theta\)</span>: a parameter that expresses the characteristics of a system</li>
+<li><span class="math">\(Y\)</span>: a dataset that is generated by observing the system</li>
+</ul></li>
+<li><p>Bayesian inference begins with a formulation of joint beliefs about <span class="math">\(\theta\)</span> and <span class="math">\(Y\)</span></p>
+<ol type="1">
+<li><em>Prior</em> distribution <span class="math">\(p(\theta)\)</span>: describes our belif about the <span class="math">\(\theta\)</span> before seeing the dataset <span class="math">\(Y\)</span></li>
+<li><em>Likelihood</em> <span class="math">\(p(y|\theta)\)</span>: describes our belief about <span class="math">\(Y\)</span> if we knew the value of <span class="math">\(\theta\)</span>
+<ul>
+<li>also called <em>sampling model</em></li>
+</ul></li>
+</ol></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Once the dataset <span class="math">\(Y\)</span> becomes available, the last step is to update our belif about <span class="math">\(\theta\)</span></p>
+<ol start="3" type="1">
+<li><em>Posterior</em> distribution <span class="math">\(p(\theta|y)\)</span>: describes our belief about <span class="math">\(\theta\)</span> having observed dataset <span class="math">\(Y\)</span></li>
+</ol></li>
+</ul>
+<p><span class="math">\[p(\theta|y) = \frac{p(y|\theta) p(\theta)}{\int p(y|\tilde\theta )p(\tilde\theta) \,\mathrm{d}\tilde\theta}\]</span></p>
+<ul>
+<li><em>Bayes’ rule does not tell us what our beliefs should be, it tells us how they should change after seeing new information</em></li>
+</ul>
+</section><section id="why-bayes" class="slide level2">
+<h1>Why Bayes?</h1>
+<ul>
+<li>We are interested in the prevalence of flu in a small city</li>
+<li>A small random sample of 20 individuals from the city will be checked</li>
+<li><span class="math">\(\theta\)</span>: infection rate in the city</li>
+<li><span class="math">\(Y\)</span>: total number of people in the sample who are infected</li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="prior">Prior</h3>
+<ul>
+<li>Studies in compariable cities indicate that the infection rate ranges from 0.05 to 0.20, with an average of 0.10</li>
+<li>There are infinately many candicates and we use one that is <em>analytically tractable</em> for computational convenience
+<ul>
+<li>assume <span class="math">\(p(\theta)\)</span> is <span class="math">\(\mathrm{beta}(a,b)\)</span></li>
+<li><span class="math">\(a\)</span> and <span class="math">\(b\)</span> are called <em>hyperparameters</em></li>
+</ul></li>
+</ul>
+<p><img src="figure/betaplot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<ul>
+<li>We select <span class="math">\(a=5\)</span> and <span class="math">\(b=45\)</span> so that
+<ul>
+<li><span class="math">\(E[\theta] = \frac{a}{a+b} =\)</span> 0.1</li>
+<li><span class="math">\(\mathrm{mode}[\theta] = \frac{a-1}{a+b-2} =\)</span> 0.0833</li>
+<li><span class="math">\(P(\theta\in(0.05, 0.20)) =\)</span> 0.8815</li>
+</ul></li>
+</ul>
+<p><img src="figure/betaplot2.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="likelihood">Likelihood</h3>
+<ul>
+<li>If the value of <span class="math">\(\theta\)</span> were known, then <span class="math">\(Y\)</span> can be modeled as a binomial distribution <span class="math">\[Y|\theta \sim \mathrm{binomial}(20, \theta)\]</span></li>
+</ul>
+<p><img src="figure/binomplot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="posterior">Posterior</h3>
+<ul>
+<li>We will see that if <span class="math">\(\theta \sim \mathrm{beta}(a,b)\)</span> and <span class="math">\(Y|\theta \sim \mathrm{binomial}(n, \theta)\)</span>, then the posterior distribution is beta too! <span class="math">\[\theta|Y \sim \mathrm{beta}(a+Y,b+n-Y)\]</span></li>
+</ul>
+<p><img src="figure/posteriorplot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Suppose half of the sampled individuals are infected, i.e. <span class="math">\(Y=10\)</span></p>
+<ul>
+<li><span class="math">\(E[\theta|Y=10] = \)</span> 0.2143</li>
+<li><span class="math">\(\mathrm{mode}[\theta|Y=10] = \)</span> 0.2059<br /></li>
+<li>95% confidence interval is (0.122, 0.3107), i.e. <span class="math">\[P(\theta \in(0.122, 0.3107) | Y=10) =  95\%\]</span></li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="comparison-to-frequentist-approach">Comparison to Frequentist Approach</h3>
+<ul>
+<li>No prior information is needed</li>
+<li>Point estimate: <span class="math">\(\hat\theta = \frac{Y}{n}\)</span></li>
+<li>95% confidence interval is <span class="math">\(\hat\theta \pm 1.96\sqrt{\frac{\hat\theta(1-\hat\theta)}{n}}\)</span>
+<ul>
+<li>With <span class="math">\(Y=10\)</span>, it is <span class="math">\((0.2809, 0.7191)\)</span>, much <em>wider</em> than the Bayesian counterparty</li>
+<li><em>Prior information helps reduce uncertainty!</em></li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="one-parameter-models" class="titleslide slide level1"><h1>2. One-parameter Models</h1></section><section id="binomial-model" class="slide level2">
+<h1>Binomial Model</h1>
+<ul>
+<li><span class="math">\(Y\)</span> has binomial distribution with parameter <span class="math">\(n\)</span> and <span class="math">\(\theta\)</span>
+<ul>
+<li><span class="math">\(n\)</span> is known, <span class="math">\(\theta\)</span> is unknown</li>
+<li><span class="math">\(Y\)</span> is number of “successes” in <span class="math">\(n\)</span> independent trials
+<ul>
+<li>sum of <span class="math">\(n\)</span> i.i.d. Bernoulli random variables</li>
+</ul></li>
+<li>Each trial has <span class="math">\(\theta\)</span> probability of success</li>
+</ul></li>
+<li>Likelihood: <span class="math">\(Y|\theta \sim \mathrm{binomial}(n, \theta)\)</span> <span class="math">\[p(Y|\theta) = {n\choose Y} \theta^Y(1-\theta)^{n-Y}\]</span></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="uniform-prior">Uniform Prior</h3>
+<ul>
+<li>Each value has equal possibility: <span class="math">\(\theta \sim \mathrm{uniform}[0,1]\)</span> <span class="math">\[p(\theta) = 1\]</span>
+<ul>
+<li>A <em>noninformative</em> prior</li>
+</ul></li>
+<li>Bayes’ rule asserts: <span class="math">\[p(\theta|Y) = \frac{p(Y|\theta)p(\theta)}{p(Y)} = \frac{p(Y|\theta)}{p(Y)}\propto p(Y|\theta)\]</span></li>
+<li><span class="math">\(\propto\)</span> means “is proportional to”
+<ul>
+<li><span class="math">\(p(\theta|Y)\)</span> is proportional to <span class="math">\(p(Y|\theta)\)</span> <em>as a function of <span class="math">\(\theta\)</span></em></li>
+<li>because <span class="math">\(p(Y)\)</span> does not depend on <span class="math">\(\theta\)</span></li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>Further, we can see that <span class="math">\[p(\theta|Y)\propto \theta^Y(1-\theta)^{n-Y}\]</span></li>
+<li>So if we assume <span class="math">\(p(\theta|Y) = C \theta^Y(1-\theta)^{n-Y}\)</span> for some constant <span class="math">\(C&gt;0\)</span>, then <span class="math">\[C^{-1} = \int_0^1 \theta^Y(1-\theta)^{n-Y}\,\mathrm{d}\theta = B(Y+1, n-Y+1),\]</span> where <span class="math">\(B\)</span> is the beta function, because <span class="math">\(\int_0^1 p(\theta|Y)\,\mathrm{d}\theta = 1\)</span></li>
+<li>So <span class="math">\[p(\theta|Y) = \frac{\theta^Y(1-\theta)^{n-Y}}{B(Y+1, n-Y+1)},\]</span> i.e. <span class="math">\(\theta|Y \sim \mathrm{beta}(Y+1, n-Y+1)\)</span></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="beta-prior">Beta Prior</h3>
+<ul>
+<li><span class="math">\(\theta \sim \mathrm{beta}(a,b)\)</span> <span class="math">\[p(\theta) = \frac{\theta^{a-1}(1-\theta)^{b-1}}{B(a, b)}\]</span></li>
+<li>Uniform distribution is a special case of beta distribution
+<ul>
+<li>uniform[0,1] = beta(1,1)</li>
+</ul></li>
+<li>Applying Bayes’ rule <span class="math">\[
+\begin{align*}
+p(\theta|Y) \propto &amp; p(Y|\theta)p(\theta) \\ 
+= &amp;  {n\choose Y}\theta^Y(1-\theta)^{n-Y}\times \frac{\theta^{a-1}(1-\theta)^{b-1}}{B(a, b)}
+\end{align*}
+\]</span> so <span class="math">\(p(\theta|Y) = C \theta^{a+Y-1}(1-\theta)^{b+n-Y-1}\)</span> for some positive constant <span class="math">\(C\)</span>, where</li>
+</ul>
+</section><section class="slide level2">
+
+<p><span class="math">\[
+\begin{align*}
+C^{-1} = &amp; \int_0^1 \theta^{a+Y-1}(1-\theta)^{b+n-Y-1}\,\mathrm{d}\theta \\ 
+= &amp; B(a+Y, b+n-Y)
+\end{align*}
+\]</span></p>
+<ul>
+<li>So the posterior distribution is <span class="math">\(\mathrm{beta}(a+Y, b+n-Y)\)</span>, i.e. <span class="math">\[p(\theta|Y) = \frac{\theta^{a+Y-1}(1-\theta)^{b+n-Y-1}}{B(a+Y, b+n-Y)}\]</span></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="conjugacy">Conjugacy</h3>
+<ul>
+<li>A class <span class="math">\(\mathcal P\)</span> of prior distributions for <span class="math">\(\theta\)</span> is called <em>conjugate</em> for a sampling model <span class="math">\(p(y|\theta)\)</span> if <span class="math">\[p(\theta)\in\mathcal P \Rightarrow p(\theta|y)\in\mathcal P\]</span>
+<ul>
+<li>Conjugate priors make posterior calculations easy</li>
+<li>but might not actually represent our prior information</li>
+</ul></li>
+<li>Beta prior is conjugate for the binomial sampling model</li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="combining-information">Combining Information</h3>
+<ul>
+<li><span class="math">\(\theta|Y \sim \mathrm{beta}(a + Y, b + n - Y)\)</span> <span class="math">\[
+\begin{align*}
+E[\theta|Y=y] = &amp; \frac{a+y}{a + b + n} \\
+= &amp;\frac{n}{a+b+n}\cdot \hat\theta + \frac{a + b}{a+b+n}\cdot \theta_0
+\end{align*}
+\]</span></li>
+<li><span class="math">\(\hat\theta=\frac{y}{n}\)</span> is the frequentist estimate of <span class="math">\(\theta\)</span></li>
+<li><span class="math">\(\theta_0=\frac{a}{a+b}\)</span> is the prior expectation of <span class="math">\(\theta\)</span></li>
+</ul>
+<ol type="1">
+<li>The posterior expectation is the <em>weighted average</em> of <span class="math">\(\hat\theta\)</span> and <span class="math">\(\theta_0\)</span></li>
+<li>The weight of <span class="math">\(\theta_0\)</span> vanishes as <span class="math">\(n\to\infty\)</span>
+<ul>
+<li>The impact of prior information gradually fades away when the dataset is sufficiently large</li>
+</ul></li>
+</ol>
+</section><section class="slide level2">
+
+<h3 id="prediction">Prediction</h3>
+<ul>
+<li>Let <span class="math">\(\tilde Y\)</span> be an additional outcome from the same population</li>
+<li><em>Predictive distribution</em>: <span class="math">\(p(\tilde Y|Y)\)</span></li>
+</ul>
+<p><span class="math">\[
+\begin{align*}
+&amp; P(\tilde Y = k| Y) \\= &amp; \int P(\tilde Y=k|\theta, Y)p(\theta|Y)\,\mathrm{d}\theta \\
+= &amp; \int_0^1  {n\choose k} \theta^k (1-\theta)^{n-k}\cdot \frac{\theta^{a+Y-1}(1-\theta)^{b+n-Y-1}}{B(a+Y, b+n-Y)} \,\mathrm{d}\theta \\
+=&amp; {n\choose k}\frac{B(a+Y+k, b+2n-Y-k)}{B(a+Y, b+n-Y)}
+\end{align*}
+\]</span></p>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">pred_dist &lt;-<span class="st"> </span>function(k, Y, a, b, n) {
+    <span class="kw">choose</span>(n, k) *<span class="st"> </span><span class="kw">beta</span>(a +<span class="st"> </span>Y +<span class="st"> </span>k, b +<span class="st"> </span><span class="dv">2</span> *<span class="st"> </span>n -<span class="st"> </span>Y -<span class="st"> </span>k)/<span class="kw">beta</span>(a +<span class="st"> </span>Y, b +<span class="st"> </span>n -<span class="st"> </span>Y)
+}
+a &lt;-<span class="st"> </span><span class="dv">5</span>
+b &lt;-<span class="st"> </span><span class="dv">45</span>
+n &lt;-<span class="st"> </span><span class="dv">20</span>
+Y &lt;-<span class="st"> </span><span class="dv">10</span>
+<span class="kw">pred_dist</span>(<span class="kw">seq</span>(<span class="dv">0</span>, n), Y, a, b, n)</code></pre>
+<pre><code>##  [1] 1.485e-02 6.022e-02 1.254e-01 1.776e-01 1.914e-01 1.662e-01 1.205e-01
+##  [8] 7.440e-02 3.970e-02 1.845e-02 7.492e-03 2.661e-03 8.235e-04 2.207e-04
+## [15] 5.065e-05 9.792e-06 1.556e-06 1.957e-07 1.831e-08 1.136e-09 3.511e-11</code></pre>
+</section><section class="slide level2">
+
+<p><img src="figure/pred_dist_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<ul>
+<li>The predictive distribution does not depend on any unknown quantities
+<ul>
+<li>It is calculated by “integrating out” the uncertainty about <span class="math">\(\theta\)</span></li>
+</ul></li>
+<li><span class="math">\(\tilde Y\)</span> is not independent of <span class="math">\(Y\)</span>
+<ul>
+<li><span class="math">\(Y\)</span> gives information about <span class="math">\(\theta\)</span>, which in turn gives informationa bout <span class="math">\(\tilde Y\)</span></li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="confidence-regions">Confidence Regions</h3>
+<ul>
+<li>Regions of the parameter space that cotains the true value of the parameter with high probability
+<ul>
+<li>After observing the data <span class="math">\(Y = y\)</span>, construct an interval <span class="math">\([l(y), u(y)]\)</span> such that <span class="math">\(P(l(y)&lt;\theta&lt;u(y))\)</span> is large</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><em>Bayesian coverage</em>: an interval <span class="math">\([l(y),u(y)]\)</span> has <span class="math">\(100(1-\alpha)\%\)</span> Bayesian coverage for <span class="math">\(\theta\)</span> if, <em>after</em> the data are observed, <span class="math">\[P(l(y)&lt;\theta&lt;u(y)|Y=y) = 1-\alpha\]</span></li>
+<li><em>Frequentist coverage</em>: a random interval <span class="math">\([l(Y),u(Y)]\)</span> has <span class="math">\(100(1-\alpha)\%\)</span> frequentist coverage for <span class="math">\(\theta\)</span> if, <em>before</em> the data are observed, <span class="math">\[P(l(Y)&lt;\theta&lt;u(Y)|\theta) = 1-\alpha\]</span></li>
+<li>In a sense, the frequentist and Bayesian notions of coverage describe pre- and post-experimental coverage, respectively.</li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="quantile-based-intervals">Quantile-based Intervals</h3>
+<ul>
+<li>Remove both tails of <span class="math">\(\alpha/2\)</span> probabilitiy</li>
+<li><p>Use <span class="math">\([\theta_{\alpha/2}, \theta_{1-\alpha/2}]\)</span>, where <span class="math">\(\theta_{\alpha/2}\)</span> and <span class="math">\(\theta_{1-\alpha/2}\)</span> are posterior quantiles <span class="math">\[P(\theta &lt; \theta_{\alpha/2}|Y=y) = P(\theta &gt; \theta_{1-\alpha/2}|Y=y) =\alpha/2\]</span></p></li>
+<li><p>Easy to implement</p></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span><span class="dv">5</span>; b &lt;-<span class="st"> </span><span class="dv">45</span>; n &lt;-<span class="st"> </span><span class="dv">20</span>; Y &lt;-<span class="st"> </span><span class="dv">10</span>; 
+<span class="kw">qbeta</span>(<span class="kw">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>), a +<span class="st"> </span>Y, b +<span class="st"> </span>n -<span class="st"> </span>Y)</code></pre>
+<pre><code>## [1] 0.1271 0.3169</code></pre>
+<p><img src="figure/ci_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="highest-posterior-density-region">Highest Posterior Density Region</h3>
+<ul>
+<li><p>If the posterior distribution is not <em>symmetric</em>, a quantile-based interval excludes some points that have higher density than some points inside the interval</p></li>
+<li><em>HPD region</em>: a subset of the parameter space <span class="math">\(s(y)\)</span> such that
+<ol type="1">
+<li><span class="math">\(P(\theta\in s(y)|Y=y) = 1-\alpha\)</span></li>
+<li><span class="math">\(p(\theta_1|Y=y) &gt; p(\theta_2|Y=y)\)</span> for <span class="math">\(\theta_1\in s(y)\)</span> and <span class="math">\(\theta_2\notin s(y)\)</span></li>
+</ol></li>
+<li><p>May not be an interval if the posterial density is <em>multimodal</em>, i.e. has multiple peaks</p></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>Harder to implement: usually apply simulation to approximate</li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span><span class="dv">5</span>; b &lt;-<span class="st"> </span><span class="dv">45</span>; n &lt;-<span class="st"> </span><span class="dv">20</span>; Y &lt;-<span class="st"> </span><span class="dv">10</span>;
+<span class="kw">require</span>(hdrcde)
+<span class="kw">as.vector</span>(<span class="kw">hdr</span>(<span class="kw">rbeta</span>(<span class="fl">1e5</span>, a +<span class="st"> </span>Y, b +<span class="st"> </span>n -<span class="st"> </span>Y), <span class="dt">prob=</span><span class="dv">95</span>)$hdr)</code></pre>
+<pre><code>## [1] 0.1207 0.3089</code></pre>
+<p><img src="figure/hdr_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section id="poisson-model" class="slide level2">
+<h1>Poisson Model</h1>
+<ul>
+<li>Usually models the number of events occurring in a fixed time period</li>
+<li>Likelihood: <span class="math">\(Y|\theta \sim \mathrm{Poisson}(\theta)\)</span> <span class="math">\[p(Y|\theta) = \frac{\theta^Ye^{-\theta}}{Y!}\]</span>
+<ul>
+<li><span class="math">\(E[Y|\theta] = \mathrm{var}(Y|\theta) = \theta\)</span></li>
+</ul></li>
+</ul>
+<p><img src="figure/poisplot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="gamma-prior">Gamma Prior</h3>
+<ul>
+<li><span class="math">\(\theta \sim \mathrm{Gamma}(a, b)\)</span>
+<ul>
+<li><span class="math">\(a\)</span> is the shape parameter and <span class="math">\(b\)</span> is the rate parameter <span class="math">\[p(\theta) = \frac{b^a}{\Gamma(a)}\theta^{a-1}e^{-b\theta}\]</span></li>
+<li><span class="math">\(E[\theta] = \frac{a}{b}\)</span></li>
+</ul></li>
+</ul>
+<p><img src="figure/gammaplot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="posterior-1">Posterior</h3>
+<ul>
+<li>By Bayes’ rule, <span class="math">\[p(\theta|Y) \propto p(Y|\theta)p(\theta)= \frac{\theta^Ye^{-\theta}}{Y!}\times \frac{b^a}{\Gamma(a)}\theta^{a-1}e^{-b\theta} \]</span></li>
+<li>So <span class="math">\(p(\theta|Y) = C\theta^{a+Y-1}e^{-(b+1)\theta}\)</span>, where <span class="math">\[C^{-1} = \int_0^\infty \theta^{a+Y-1}e^{-(b+1)\theta}\,\mathrm{d}\theta = \frac{\Gamma(a+Y)}{(b+1)^{a+Y}}\]</span></li>
+<li>So <span class="math">\[p(\theta|Y) = \frac{(b+1)^{a+Y}}{\Gamma(a+Y)}\theta^{a+Y-1}e^{-(b+1)\theta},\]</span> i.e. <span class="math">\(\theta|Y\sim\mathrm{Gamma}(a+Y, b+1)\)</span></li>
+<li>Gamma prior is conjugate for the Poisson sampling model</li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="combining-information-1">Combining Information</h3>
+<ul>
+<li>Suppose <span class="math">\(Y_1,\ldots,Y_n\)</span> are i.i.d. Poisson</li>
+<li>Then <span class="math">\(\theta|Y_1,\ldots,Y_n \sim \mathrm{Gamma}(a+\sum_{i=1}^nY_i, b+n)\)</span></li>
+</ul>
+<p><span class="math">\[
+\begin{align*}
+E[\theta|Y_1,\ldots,Y_n] =&amp; \frac{a+\sum_{i=1}^nY_i}{b+n} \\
+=&amp; \frac{n}{b+n}\cdot \hat\theta + \frac{b}{b+n}\cdot \theta_0
+\end{align*}
+\]</span></p>
+<ul>
+<li><span class="math">\(\hat\theta=\frac{\sum_{i=1}^nY_i}{n}\)</span> is the frequentist estimate of <span class="math">\(\theta\)</span></li>
+<li><span class="math">\(\theta_0=\frac{a}{b}\)</span> is the prior expectation of <span class="math">\(\theta\)</span></li>
+</ul>
+<ol type="1">
+<li>The posterior expectation is the <em>weighted average</em> of <span class="math">\(\hat\theta\)</span> and <span class="math">\(\theta_0\)</span></li>
+<li>The weight of <span class="math">\(\theta_0\)</span> vanishes as <span class="math">\(n\to\infty\)</span>
+<ul>
+<li>The impact of prior information gradually fades away when the dataset is sufficiently large</li>
+</ul></li>
+</ol>
+</section><section class="slide level2">
+
+<h3 id="prediction-1">Prediction</h3>
+<ul>
+<li>The predictive distribution of <span class="math">\(\tilde Y\)</span>, an additional outcome from the same population, given the observation <span class="math">\(Y\)</span> <span class="math">\[
+\begin{align*}
+ &amp;\textstyle P(\tilde Y=k|Y)\\ =&amp; \int_0^\infty P(\tilde Y=k|\theta )p(\theta|Y)\,\mathrm{d}\theta \\
+=&amp; \int_0^\infty \frac{\theta^k e^{-\theta}}{k!}\cdot \frac{(b+1)^{a+Y}\theta^{a+Y-1}e^{-(b+1)\theta}}{\Gamma(a+Y)}\,\mathrm{d}\theta \\
+=&amp; \frac{\Gamma(a+Y+k)}{\Gamma(k+1)\Gamma(a+Y)}\left(\frac{b+1}{b+2}\right)^{a+Y}\left(\frac{1}{b+2}\right)^k
+\end{align*}\]</span></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>So <span class="math">\(\tilde Y|Y\)</span> has a negative binomial distribution with “number of failures” <span class="math">\(a+Y\)</span> and “success probability” <span class="math">\(\frac{1}{b+2}\)</span></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">a &lt;-<span class="st"> </span><span class="dv">2</span>; b &lt;-<span class="st"> </span><span class="dv">1</span>; Y &lt;-<span class="st"> </span><span class="dv">5</span>; 
+<span class="kw">dnbinom</span>(<span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">10</span>), a +<span class="st"> </span>Y, <span class="dv">1</span> /<span class="st"> </span>(b +<span class="st"> </span><span class="dv">2</span>))</code></pre>
+<pre><code>##  [1] 0.0004572 0.0021338 0.0056902 0.0113804 0.0189673 0.0278187 0.0370916
+##  [8] 0.0459229 0.0535768 0.0595297 0.0634984</code></pre>
+<p><img src="figure/pred_dist_plot2.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section id="exponential-families-and-conjugate-priors" class="slide level2">
+<h1>Exponential Families and Conjugate Priors</h1>
+<ul>
+<li>Both binomial and Poisson models belong to one-parameter <em>exponential family models</em>, whose densities are of the form <span class="math">\[p(y|\theta)=a(y)e^{\phi(\theta)t(y)+b(\theta)}\]</span></li>
+<li>Binomial model <span class="math">\[\textstyle \phi(\theta)=\log\left(\frac{\theta}{1-\theta}\right), 
+t(y)=y, 
+b(\theta) = n\log(1-\theta),
+a(y) = {n\choose y}\]</span></li>
+<li>Poisson model <span class="math">\[\phi(\theta) = \log\theta, t(y) = y, b(\theta) = -\log(\theta),  a(y) = 1\]</span></li>
+<li>Exponential model <span class="math">\[\phi(\theta) = -\theta, t(y) = y, b(\theta) = \log(\theta),  a(y) = 1\]</span></li>
+<li>Normal model (with <span class="math">\(\sigma^2\)</span> known) <span class="math">\[\textstyle \phi(\theta) = \frac{\theta}{\sigma^2}, t(y) = y, b(\theta) = -\frac{\theta^2}{2\sigma^2},  a(y) = \exp\left(\textstyle-\frac{y^2}{2\sigma^2}\right)\]</span></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>Choose a prior of the form <span class="math">\(p(\theta)=k(\alpha,\beta)e^{\alpha\phi(\theta)+\beta b(\theta)}\)</span></li>
+<li>Then the posterior is <span class="math">\[p(\theta|Y)\propto e^{(\alpha+t(Y))\phi(\theta)+(\beta+1)b(\theta)}\]</span></li>
+<li>So the prior is conjugate for the exponential family model</li>
+<li>In general, the posterior conditional on the i.i.d. data <span class="math">\(Y_1,\ldots,Y_n\)</span> is <span class="math">\[p(\theta|Y_1,\ldots,Y_n)\propto e^{(\alpha+\sum_{i=1}^nt(Y_i))\phi(\theta)+(\beta+n)b(\theta)}\]</span></li>
+</ul>
+</section></section>
+<section><section id="normal-model" class="titleslide slide level1"><h1>3. Normal Model</h1></section><section id="normal-model-1" class="slide level2">
+<h1>Normal Model</h1>
+<ul>
+<li>Normal distribution is probably the most useful probability model in statistics
+<ul>
+<li>supported by central limit theorem</li>
+<li>two parameters, mean <span class="math">\(\mu\)</span> and variance <span class="math">\(\sigma^2\)</span>, are often of primary interest</li>
+</ul></li>
+</ul>
+<p><span class="math">\[p(y|\mu, \sigma^2) =\frac{1}{\sqrt{2\pi\sigma^2}}\textstyle\exp\left(-\frac{(y-\mu)^2}{2\sigma^2}\right),\quad -\infty &lt; y &lt; \infty\]</span></p>
+</section><section class="slide level2">
+
+<ul>
+<li><p>the distribution is symmetric about <span class="math">\(\theta\)</span>, and the mode, median and mean are all equal to <span class="math">\(\theta\)</span></p></li>
+<li><p>about 95% of the population lies within two standard deviations of the mean (more precisely, 1.96 standard deviations)</p></li>
+</ul>
+<p><img src="figure/normplot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section id="inference-on-mean-with-known-variance" class="slide level2">
+<h1>Inference on Mean with Known Variance</h1>
+<ul>
+<li>Choose a normal prior on the mean, i.e. <span class="math">\(\mu\sim \mathrm{normal}(\mu_0, \tau_0)\)</span> <span class="math">\[
+\begin{align*}
+p(\mu|Y, \sigma^2) &amp; = \frac{p(\mu|\sigma^2)p(Y|\mu,\sigma^2)}{p(Y|\sigma^2)} 
+\propto p(\mu|\sigma^2) p(Y|\mu,\sigma^2) \\
+&amp;\propto \textstyle \exp\left(-\frac{(\mu-\mu_0)^2}{2\tau_0}\right)\exp\left(-\frac{(Y-\mu)^2}{2\sigma^2}\right) 
+\end{align*}\]</span></li>
+<li>The exponent is quadratic in <span class="math">\(\mu\)</span> so <span class="math">\(p(\mu|Y,\sigma^2)\)</span> is normal with mean <span class="math">\[ \frac{\frac{1}{\tau_0^2}\mu_0+\frac{1}{\sigma^2}Y}{\frac{1}{\tau_0^2}+\frac{1}{\sigma^2}}\]</span> and variance <span class="math">\[\frac{1}{\frac{1}{\tau_0^2}+\frac{1}{\sigma^2}}\]</span></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>In general, given i.i.d. normal data <span class="math">\(Y_1,\ldots,Y_n\)</span>, if we select a normal prior on <span class="math">\(\mu\)</span>, then <span class="math">\(p(\mu|Y_1,\ldots,Y_n,\sigma^2)\)</span> is normal with mean <span class="math">\(\mu_n\)</span> and variance <span class="math">\(\tau_n^2\)</span>, where <span class="math">\[\mu_n = \frac{\frac{1}{\tau_0^2}\mu_0+\frac{n}{\sigma^2}\bar{Y}}{\frac{1}{\tau_0^2}+\frac{n}{\sigma^2}}\quad\mbox{and}\quad \tau_n^2=\frac{1}{\frac{1}{\tau_0^2}+\frac{n}{\sigma^2}}\]</span></p></li>
+<li>Inverse variance is often called <em>precision</em> and it quantifies the information <span class="math">\[\frac{1}{\tau_n^2}=\frac{1}{\tau_0^2}+\frac{n}{\sigma^2}\]</span>
+<ul>
+<li>Posterior info = prior info + data info</li>
+<li>Precision is increasing in <span class="math">\(n\)</span></li>
+</ul></li>
+<li><p>Posterior mean is a weighted average of the prior mean and the sample mean <span class="math">\[\mu_n = \frac{\tau_0^{-2}}{\tau_0^{-2}+n\sigma^{-2}}\mu_0 + \frac{n\sigma^{-2}}{\tau_0^{-2}+n\sigma^{-2}}\bar{Y}\]</span></p></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="example">Example</h3>
+<ul>
+<li>The revenue of a Taobao shop in the past 9 months is as follows (unit: million RMB) and we hope to make inference on the mean monthly revenue.</li>
+</ul>
+<pre><code>## [1] 1.82 2.30 1.64 1.52 1.72 1.36 1.74 2.08 1.97</code></pre>
+<ul>
+<li>We know the average monthly revenue in million RMB in 2012 is about 2 and its s.d. is about 0.6
+<ul>
+<li>Choose prior on <span class="math">\(\mu\)</span> as <span class="math">\(\mathrm{normal}(2, 0.6^2)\)</span></li>
+</ul></li>
+<li>We use the sample variance as <span class="math">\(\sigma^2\)</span></li>
+</ul>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">revenue &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">1.82</span>, <span class="fl">2.3</span>, <span class="fl">1.64</span>, <span class="fl">1.52</span>, <span class="fl">1.72</span>, <span class="fl">1.36</span>, <span class="fl">1.74</span>, <span class="fl">2.08</span>, <span class="fl">1.97</span>)
+n &lt;-<span class="st"> </span><span class="kw">length</span>(revenue)
+Y_bar &lt;-<span class="st"> </span><span class="kw">mean</span>(revenue)
+s2 &lt;-<span class="st"> </span><span class="kw">var</span>(revenue)
+mu_0 &lt;-<span class="st"> </span><span class="dv">2</span>
+tau_0 &lt;-<span class="st"> </span><span class="fl">0.6</span>
+a &lt;-<span class="st"> </span><span class="dv">1</span>/tau_0^<span class="dv">2</span> +<span class="st"> </span>n/s2
+b &lt;-<span class="st"> </span>mu_0/tau_0^<span class="dv">2</span> +<span class="st"> </span>n/s2 *<span class="st"> </span>Y_bar
+tau_n &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="dv">1</span>/a)
+mu_n &lt;-<span class="st"> </span>b/a</code></pre>
+<ul>
+<li>So the posterior distribution of the average monthly revenue is normal with mean 1.7996 and s.d. 0.0949
+<ul>
+<li>Its prior is normal with mean 2 and s.d. 0.6</li>
+<li>Sample mean is 1.7944 and sample s.d. is 0.2883</li>
+</ul></li>
+<li>Remark: posterior s.d. is smaller than both prior s.d. and sample s.d.</li>
+</ul>
+</section><section class="slide level2">
+
+<p><img src="figure/norm_inference_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section id="joint-inference-on-mean-and-variance" class="slide level2">
+<h1>Joint Inference on Mean and Variance</h1>
+<ul>
+<li>In the previous example, we assumed <span class="math">\(\sigma^2\)</span> is known and use the sample variance for its value
+<ul>
+<li>Due to the small sample size, the sample variance has a fairly large uncertainty in itself which we have ignored<br /></li>
+</ul></li>
+<li>Hence, we need to infer <span class="math">\(\mu\)</span> and <span class="math">\(\sigma^2\)</span> at the same time and find a joint prior on <span class="math">\((\mu, \sigma^2)\)</span></li>
+</ul>
+<p><span class="math">\[p(\mu,\sigma^2|Y_1,\ldots,Y_n) \propto p(Y_1,\ldots,Y_n| \mu,\sigma^2)p(\mu,\sigma^2)\]</span></p>
+</section><section class="slide level2">
+
+<ul>
+<li>In choosing the joint prior <span class="math">\(p(\mu,\sigma^2)\)</span>, note that <span class="math">\[p(\mu,\sigma^2) = p(\mu|\sigma^2)p(\sigma^2)\]</span></li>
+<li><p>We have seen that if <span class="math">\(\sigma^2\)</span> were known, then a conjugate prior on <span class="math">\(\mu\)</span> is normal so we set <span class="math">\(p(\mu|\sigma^2)\)</span> as normal</p></li>
+<li><p>We need a distribution that has support on <span class="math">\((0, \infty)\)</span> for <span class="math">\(\sigma^2\)</span> and it turns out Gamma distribution is a crutial element</p></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>The joint prior is chosen as follows <span class="math">\[
+\begin{align*}
+\theta|\sigma^2 &amp; \sim \mathrm{normal}\textstyle\left(\mu_0, \frac{\sigma^2}{\kappa_0}\right)\\
+\sigma^{-2} &amp; \sim \mathrm{gamma}\textstyle\left(\frac{\nu_0}{2}, \frac{\nu_0\sigma_0}{2}\right) 
+\end{align*}
+\]</span></p></li>
+<li><p><span class="math">\(\mu_0\)</span> and <span class="math">\(\kappa_0\)</span> can be interpreted as the mean and sample size from a set of prior observations</p></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Then using Bayes’ rule, we can show that (details are left for exercise) <span class="math">\[\{\mu|Y_1,\ldots,Y_n, \sigma^2\} \sim \mathrm{normal}(\mu_n, \sigma^2/\kappa_n),\]</span> where <span class="math">\[\kappa_n = \kappa_0+n\quad\mbox{and}\quad \mu_n=\frac{\kappa_0\mu_0+n\bar{Y}}{\kappa_n},\]</span> and <span class="math">\[\{\sigma^{-2}|Y_1,\ldots,Y_n\} \sim \mathrm{gamma}(\nu_n/2,\nu_n\sigma_n^2/2), \]</span> where <span class="math">\[
+\begin{align*}
+\nu_n &amp;=\nu_0 + n \\
+\sigma_n^2 &amp;= \frac{1}{\nu_n}[\nu_0\sigma_0^2 + (n-1)s^2 + \frac{\kappa_0n}{\kappa_n}(\bar{Y}-\mu_0)^2]
+\end{align*}
+\]</span> and <span class="math">\(s^2\)</span> is the sample variance of <span class="math">\(Y_1,\ldots,Y_n\)</span></p></li>
+<li><p><span class="math">\(\nu_0\sigma_0^2\)</span> and <span class="math">\(\nu_n\sigma_n^2\)</span> can be interpreted as prior and posterior “sum of squared observations from the sample mean”</p></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="back-to-previous-example">Back to Previous Example</h3>
+<ul>
+<li>Assume both <span class="math">\(\mu\)</span> and <span class="math">\(\sigma^2\)</span> are unknown</li>
+<li>We know the average monthly revenue in million RMB in 2012 is about 2 and its s.d. is about 0.6
+<ul>
+<li>choose prior parameters <span class="math">\(\mu_0=2\)</span>, <span class="math">\(\sigma_0=0.6\)</span>, <span class="math">\(\kappa_0=12\)</span> and <span class="math">\(\nu_0 = 12\)</span></li>
+</ul></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">mu_0 &lt;-<span class="st"> </span><span class="dv">2</span>
+sigma_0 &lt;-<span class="st"> </span><span class="fl">0.6</span>
+kappa_0 &lt;-<span class="st"> </span><span class="dv">12</span>
+nu_0 &lt;-<span class="st"> </span><span class="dv">12</span>
+n &lt;-<span class="st"> </span><span class="kw">length</span>(revenue)
+Y_bar &lt;-<span class="st"> </span><span class="kw">mean</span>(revenue)
+s2 &lt;-<span class="st"> </span><span class="kw">var</span>(revenue)
+kappa_n &lt;-<span class="st"> </span>kappa_0 +<span class="st"> </span>n
+mu_n &lt;-<span class="st"> </span>(kappa_0 *<span class="st"> </span>mu_0 +<span class="st"> </span>n *<span class="st"> </span>Y_bar)/kappa_n
+nu_n &lt;-<span class="st"> </span>nu_0 +<span class="st"> </span>n
+sigma_n &lt;-<span class="st"> </span><span class="kw">sqrt</span>((nu_0 *<span class="st"> </span>sigma_0^<span class="dv">2</span> +<span class="st"> </span>(n -<span class="st"> </span><span class="dv">1</span>) *<span class="st"> </span>s2 +<span class="st"> </span>kappa_0 *<span class="st"> </span>n/kappa_n *<span class="st"> </span>(Y_bar -<span class="st"> </span>
+<span class="st">    </span>mu_0)^<span class="dv">2</span>)/nu_n)</code></pre>
+</section><section class="slide level2">
+
+<ul>
+<li><p>The posterior parameters are <span class="math">\(\mu_n = 1.9119\)</span>, <span class="math">\(\kappa_n = 21\)</span>, <span class="math">\(\nu_n = 21\)</span>, and <span class="math">\(\sigma_n^2 = 0.2477\)</span>.</p></li>
+<li><p>The posterior joint distribution of <span class="math">\((\mu,\sigma^2)\)</span> is determined by <span class="math">\[
+\begin{align*}
+\{\mu|Y_1,\ldots,Y_n, \sigma^2\} &amp;\sim \mathrm{normal}(1.9119, \sigma^2/21),\\
+\{\sigma^{-2}|Y_1,\ldots,Y_n\} &amp; \sim \mathrm{gamma}(10.5,2.6012), 
+\end{align*}
+\]</span></p></li>
+</ul>
+<p><img src="figure/norm_joint_infer_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<ul>
+<li>It can be shown that <span class="math">\(\frac{\mu-\mu_n}{\sigma_n/\sqrt{\kappa_n}}\)</span> has a <span class="math">\(t\)</span>-distribution with <span class="math">\(\nu_n\)</span> degrees of freedom
+<ul>
+<li>This gives the <em>marginal</em> posterior distribution of <span class="math">\(\mu\)</span>, i.e. <span class="math">\(p(\mu|Y_1,\ldots,Y_n)\)</span></li>
+</ul></li>
+<li>As expected, the uncertainty about the posterior distribution of <span class="math">\(\mu\)</span> is larger when assuming <span class="math">\(\sigma^2\)</span> is unknown</li>
+</ul>
+<p><img src="figure/var_whehter_known.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="usage-of-conjugate-priors-is-limited">Usage of Conjugate Priors is Limited</h3>
+<ul>
+<li>Only exist for simple models/distributions</li>
+<li>Only for <em>computatational</em> reasons
+<ul>
+<li>Keep distribution family fixed and update hyperparameters only</li>
+</ul></li>
+<li>Restricts our modeling of prior information
+<ul>
+<li>Implies a <em>subjective</em> manipulation of the prior information</li>
+<li>E.g., why is the prior of a binomial distribution necessarily beta distribution?</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="how-do-we-deal-with-non-conjugate-priors">How do We Deal with Non-conjugate Priors?</h3>
+<ul>
+<li>Monte Carlo Simulation!</li>
+</ul>
+</section></section>
+<section><section id="baisc-monte-carlo" class="titleslide slide level1"><h1>4. Baisc Monte Carlo</h1></section><section id="introduction" class="slide level2">
+<h1>Introduction</h1>
+<ul>
+<li><p>Monte Carlo methods are a broad class of computational algorithms that rely on repeated random sampling to obtain numerical results</p></li>
+<li><p>One runs simulations many times to obtain the information of an unknown probabilistic entity</p></li>
+<li><p>Mordern version of MC was invented by Stanislaw Ulam in late 1940s, while he was working on nuclear weapons projects at the Los Alamos National Laboratory</p></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>“Monte Carlo” was named after the Monte Carlo Casino in Monte Carlo, Monaco</li>
+</ul>
+<center>
+<img src="figure/MonteCarloCasino.jpg" height="400px" width="600px"/>
+</center>
+
+</section><section class="slide level2">
+
+<h3 id="buffons-needle">Buffon’s Needle</h3>
+<ul>
+<li>The French naturalist Buffon in 1733 stated a problem: find the probability that a needle of length <span class="math">\(l\)</span> will land on a line, given a floor with equally spaced parallel lines a distance <span class="math">\(d\)</span> apart
+<ul>
+<li>Answer: <span class="math">\(p = \frac{2l}{\pi d}\)</span> when <span class="math">\(d\geq l\)</span></li>
+</ul></li>
+</ul>
+<center>
+<img src="figure/Buffon.png" height="300px" width="300px"/>
+</center>
+
+
+</section><section class="slide level2">
+
+<ul>
+<li>We then can use this experiment to estimate the probability <span class="math">\(p\)</span> and then the value of <span class="math">\(\pi\)</span></li>
+</ul>
+<center>
+<img src="figure/Buffon2.png" height="300px" width="450px"/>
+<figcaption>
+Result of 500 random tosses of a needle with <span class="math">\(d\)</span> = 3 and <span class="math">\(l\)</span> = 1. There are 107 needles cross a line, giving <span class="math">\(\pi\approx 3.116\)</span>.
+</figcaption>
+</center>
+
+</section><section class="slide level2">
+
+<h3 id="calculating-pi">Calculating <span class="math">\(\pi\)</span></h3>
+<ul>
+<li>MC is most commonly used to evaluate integrals (including probabilities)</li>
+</ul>
+<p><img src="figure/calPi.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section id="monte-carlo-integration" class="slide level2">
+<h1>Monte Carlo Integration</h1>
+<ul>
+<li><p>Let <span class="math">\(X\)</span> be a random variable with density <span class="math">\(f(x)\)</span> and we are interested in computing <span class="math">\[\mathbb{E}[h(X)] = \int  h(x)f(x)\, dx\]</span></p></li>
+<li><p>MC generates a sample <span class="math">\(X_1,\ldots,X_n\)</span> from the density <span class="math">\(f\)</span> and approximates the integral with <span class="math">\[\bar{h}_n = \frac{1}{n}\sum_{j=1}^n h(X_j)\]</span></p></li>
+<li><p><strong>Convergence</strong> (Strong Law of Large Numbers) <span class="math">\[\lim_{n\to\infty}\frac{1}{n}\sum_{j=1}^n h(X_j) = \mathbb{E}[h(X)]\]</span></p></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="example-1">Example</h3>
+<ul>
+<li>Compute <span class="math">\(\int_0^1 [x^2+4x\sin(x)]\,dx\)</span>
+<ul>
+<li>Exact value is <span class="math">\(\frac{1}{3} + 4[\sin(1)-cos(1)] = 1.538\)</span></li>
+</ul></li>
+<li>Write the integral as <span class="math">\(\mathbb{E} [X^2+4X\sin(X)]\)</span> where <span class="math">\(X\sim\mathrm{Uniform}(0,1)\)</span></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>
+X &lt;-<span class="st"> </span><span class="kw">runif</span>(N)
+<span class="kw">mean</span>(X^<span class="dv">2</span> +<span class="st"> </span><span class="dv">4</span> *<span class="st"> </span>X *<span class="st"> </span><span class="kw">sin</span>(X))</code></pre>
+<pre><code>## [1] 1.521</code></pre>
+</section><section class="slide level2">
+
+<h3 id="errors-in-mc">Errors in MC</h3>
+<ul>
+<li>Clearly, the estimation error decreases as the number of replications <span class="math">\(n\)</span> increases</li>
+<li>But can we quantify the error for a given <span class="math">\(n\)</span>?</li>
+<li>Back to the previous exmaple, plot the error against <span class="math">\(n\)</span></li>
+</ul>
+<p><img src="figure/MC_errors.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Error is of order <span class="math">\(n^{-1/2}\)</span></p></li>
+<li><p>Central Limit Theorem <span class="math">\[\frac{\bar{h}_n - \mathbb{E}[h(X)]}{\sqrt{\mathrm{Var(h(X))}}}\Rightarrow \mathcal N(0, 1)\]</span></p></li>
+<li>So error is roughly <span class="math">\(\sqrt{\frac{\mathrm{Var}(h(X))}{n}}\mathcal\cdot N(0, 1)\)</span> when <span class="math">\(n\)</span> is large</li>
+<li><p>However, <span class="math">\(\mathrm{Var(h(X))}\)</span> is usually unknown and instead we use the sample variance <span class="math">\(s_n^2 = \frac{1}{n^2}\sum_{j=1}^n[h(X_j)-\bar{h}_n]^2\)</span> to approximate it</p></li>
+</ul>
+</section><section id="random-variable-generation" class="slide level2">
+<h1>Random Variable Generation</h1>
+<ul>
+<li>Use computer to repeatedly produce samples from the target distribution so that the empirical distribution can approximate the true distribution</li>
+</ul>
+<p><span class="math">\[ 0.2\mathcal N(-5, 4) + 0.5\mathcal N(0, 1) + 0.3\mathcal N(3, 0.25) \]</span></p>
+<p><img src="figure/MC_intro.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Statistical software packages implement only “standard” probability distributions</p></li>
+<li>We will be concerned with generating random variables from an arbitrary density
+<ul>
+<li>For example, posterior densities are usually of the form <span class="math">\[p(\theta|Y) \propto p(Y|\theta)p(\theta)\]</span></li>
+</ul></li>
+</ul>
+</section><section id="pseudo-random-numbers" class="slide level2">
+<h1>Pseudo-random Numbers</h1>
+<ul>
+<li><p>Monte Carlo simulation is fundamentally based on the production of uniform random variables between 0 and 1</p></li>
+<li>Computed-generated uniform random variables are product of a <em>deterministic</em> algorithm and not truely random
+<ul>
+<li>Given the algorithm and the <em>seed</em>, all the subsequent numbers are known with certainty</li>
+<li>However, without these knowledge, they do <em>appear</em> to be random and can pass various statistical tests</li>
+<li>So they’re called <em>pseudo-random</em> numbers</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="linear-congruential-generator">Linear Congruential Generator</h3>
+<ul>
+<li>Simple; building block of many advanced methods</li>
+<li>First produces a sequence of integers <span class="math">\[X_{i+1} = (aX_i + c) \mod m,\quad i=0,1,2,\ldots\]</span>
+<ul>
+<li>Initial value <span class="math">\(X_0\)</span> is called seed</li>
+</ul></li>
+<li><p>Then transform them to numbers between 0 and 1 by <span class="math">\[R_i = \frac{X_i}{m}\]</span></p></li>
+<li><p>Shortcoming: period is not long enough for modern usage</p></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>In R, <code>runif</code> generates pseudo-random numbers and <code>set.seed</code> sets random seed
+<ul>
+<li>Random seed should be manually set only for the purpose of reproducibility of the results</li>
+</ul></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">runif</span>(<span class="dv">5</span>)</code></pre>
+<pre><code>## [1] 0.3173 0.1400 0.5211 0.7444 0.5071</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">runif</span>(<span class="dv">5</span>)</code></pre>
+<pre><code>## [1] 0.8583 0.1479 0.7216 0.6846 0.2722</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">123</span>)
+<span class="kw">runif</span>(<span class="dv">5</span>)</code></pre>
+<pre><code>## [1] 0.2876 0.7883 0.4090 0.8830 0.9405</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">123</span>)
+<span class="kw">runif</span>(<span class="dv">5</span>)</code></pre>
+<pre><code>## [1] 0.2876 0.7883 0.4090 0.8830 0.9405</code></pre>
+</section><section id="inverse-transform-method" class="slide level2">
+<h1>Inverse Transform Method</h1>
+<ul>
+<li>If <span class="math">\(X\)</span> has density <span class="math">\(f\)</span> and cumulative distribution function <span class="math">\(F\)</span> <span class="math">\[F(x) = \int^x_{-\infty} f(t)\,dt ,\]</span> then <span class="math">\(F^{-1}(U)\)</span> has the same distribution as <span class="math">\(X\)</span>, where <span class="math">\(U\)</span> is the uniform random variable between 0 and 1 and <span class="math">\(F^{-1}\)</span> is the inverse function of <span class="math">\(F\)</span> <span class="math">\[P(F^{-1}(U)\leq x) = P(U \leq F(x)) = F(x)\]</span></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="examples">Examples</h3>
+<ul>
+<li>If <span class="math">\(X\)</span> has exponential distribution with mean <span class="math">\(\frac{1}{3}\)</span>, then <span class="math">\(F(x) = 1 - e^{-3x}\)</span>
+<ul>
+<li><span class="math">\(F^{-1}(U) = -\frac{1}{3}\log(1-U)\)</span></li>
+</ul></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>; U &lt;-<span class="st"> </span><span class="kw">runif</span>(N);
+X &lt;-<span class="st"> </span>-<span class="kw">log</span>(<span class="dv">1</span> -<span class="st"> </span>U) /<span class="st"> </span><span class="dv">3</span>;
+<span class="kw">mean</span>(X)  ## true mean is 1/3</code></pre>
+<pre><code>## [1] 0.3286</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sd</span>(X)  ## true sd is 1/3</code></pre>
+<pre><code>## [1] 0.3286</code></pre>
+</section><section class="slide level2">
+
+<p><img src="figure/inv_trans_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<ul>
+<li>Cauchy distribution
+<ul>
+<li>Density: <span class="math">\(f(x)=\frac{1}{\pi (1+x^2)}\)</span></li>
+<li>CDF: <span class="math">\(F(x) = \frac{1}{2} + \frac{1}{\pi}\arctan(x)\)</span></li>
+<li><span class="math">\(F^{-1}(u) = \tan\left(\pi\left(u-\frac{1}{2}\right)\right)\)</span></li>
+</ul></li>
+<li>Pareto distribution
+<ul>
+<li>Density: <span class="math">\(f(x) = \frac{\alpha}{x^{\alpha+1}}\)</span>, <span class="math">\(x\geq 1\)</span></li>
+<li>CDF: <span class="math">\(F(x) = 1 - \frac{1}{x^\alpha}\)</span></li>
+<li><span class="math">\(F^{-1}(u) = \frac{1}{(1-u)^{1/\alpha}}\)</span></li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="remarks">Remarks</h3>
+<ul>
+<li>Inverse transform method allows us to transform the uniform distribution to <em>any</em> other distribution in theory</li>
+<li>However, very often the CDF or its inverse function is difficult or even impossible to compute, in which case we resort other approaches
+<ul>
+<li>E.g. normal distribution</li>
+</ul></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">6</span>; U &lt;-<span class="st"> </span><span class="kw">runif</span>(N); 
+<span class="kw">system.time</span>(<span class="kw">qnorm</span>(U, <span class="dt">mean=</span><span class="dv">0</span>, <span class="dt">sd=</span><span class="dv">1</span>))</code></pre>
+<pre><code>##    user  system elapsed 
+##   0.035   0.002   0.037</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw">rnorm</span>(N, <span class="dt">mean=</span><span class="dv">0</span>, <span class="dt">sd=</span><span class="dv">1</span>))</code></pre>
+<pre><code>##    user  system elapsed 
+##   0.069   0.000   0.069</code></pre>
+</section><section id="acceptance-rejection-method" class="slide level2">
+<h1>Acceptance-rejection Method</h1>
+<ul>
+<li><strong>Idea</strong>: if the target distribution is difficult or impossible to directly simulate, then we simulate a simpler distribution and accept only part of the samples based on certain criteria</li>
+</ul>
+</section><section class="slide level2">
+
+<p>Given a target density <span class="math">\(f\)</span>, find a density <span class="math">\(g\)</span> and a constant <span class="math">\(M&gt;0\)</span> such that <span class="math">\[f(x) \leq M g(x)\]</span> for all <span class="math">\(x\)</span> on the support of <span class="math">\(f\)</span></p>
+<ol type="1">
+<li>Generate <span class="math">\(X\)</span> from <span class="math">\(g\)</span> and <span class="math">\(U\)</span> from Uniform[0,1]</li>
+<li>If <span class="math">\(U\leq \frac{f(X)}{Mg(X)}\)</span>, accept <span class="math">\(X\)</span></li>
+<li>Otherwise, reject <span class="math">\(X\)</span> and return to step 1</li>
+</ol>
+</section><section class="slide level2">
+
+<h3 id="illustration">Illustration</h3>
+<ul>
+<li>Generate a random point <span class="math">\((X, Mg(X))\)</span> in the region below the function <span class="math">\(Mg(x)\)</span>
+<ul>
+<li><span class="math">\(X\)</span> follows density <span class="math">\(g\)</span></li>
+</ul></li>
+<li>Accept such a point if and only if it is below the function <span class="math">\(f(x)\)</span></li>
+</ul>
+<p><img src="figure/ar.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="why">Why?</h3>
+<ul>
+<li>The accepted values are <em>conditioned</em> values</li>
+<li>Unconditioned <span class="math">\(X\)</span> has density <span class="math">\(g\)</span>, but the accepted <span class="math">\(X\)</span> has density <span class="math">\(f\)</span></li>
+</ul>
+<p><span class="math">\[
+\begin{align*}
+P(X\leq x | \mathrm{accept}) = &amp; \frac{P(X\leq x, U\leq \frac{f(X)}{Mg(X)})}{P(U\leq \frac{f(X)}{Mg(X)})} \\ 
+= &amp; \frac{\int g(t) P(X \leq x, U\leq \frac{f(X)}{Mg(X)}|X=t)\, dt}{\int  g(t) P(U\leq \frac{f(X)}{Mg(X)}|X=t)\, dt} \\
+= &amp; \frac{\int_{-\infty}^x g(t) \frac{f(t)}{Mg(t)}\,dt}{\int_{-\infty}^\infty g(t) \frac{f(t)}{Mg(t)}\,dt} = \int_{-\infty}^x f(t)\,dt
+\end{align*}
+\]</span></p>
+</section><section class="slide level2">
+
+<h3 id="remarks-1">Remarks</h3>
+<ul>
+<li><span class="math">\(g\)</span> is often called the <em>instrumental</em> density</li>
+<li>An exact upper bound <span class="math">\(M\)</span> is not necessary</li>
+<li>The acceptance rate is <span class="math">\(M^{-1}\)</span>, so the smaller <span class="math">\(M\)</span> the better (more efficient)
+<ul>
+<li>The efficiency of the method is determined by how closely <span class="math">\(g\)</span> can imitate <span class="math">\(f\)</span>, especially in the tails</li>
+</ul></li>
+<li>It is necessary for <span class="math">\(g\)</span> to have a “heavier” tail than <span class="math">\(f\)</span>
+<ul>
+<li>It is impossible to use the A-R method to simulate a Cauchy distribution using a normal distribution, but the reverse works well</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="example-normal-from-cauchy">Example: Normal from Cauchy</h3>
+<ul>
+<li><span class="math">\(f\)</span> is a normal density: <span class="math">\(f(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}\)</span></li>
+<li><span class="math">\(g\)</span> is a Cauchy density: <span class="math">\(g(x) = \frac{1}{\pi(1+x^2)}\)</span></li>
+</ul>
+<p><span class="math">\[\frac{f(x)}{g(x)}=\sqrt{\frac{\pi}{2}}(1+x^2)e^{-x^2/2} \]</span> is maximized at <span class="math">\(x=\pm 1\)</span> and the maximum is <span class="math">\(M=\sqrt{\frac{2\pi}{e}}\)</span></p>
+<ul>
+<li>So the acceptance rate is <span class="math">\(\sqrt{\frac{e}{2\pi}}\approx 0.6577\)</span></li>
+</ul>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>
+M &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="dv">2</span> *<span class="st"> </span>pi/<span class="kw">exp</span>(<span class="dv">1</span>))
+samples &lt;-<span class="st"> </span><span class="kw">rcauchy</span>(N)
+U &lt;-<span class="st"> </span><span class="kw">runif</span>(N)
+A_or_R &lt;-<span class="st"> </span>U &lt;=<span class="st"> </span><span class="kw">dnorm</span>(samples)/(M *<span class="st"> </span><span class="kw">dcauchy</span>(samples))
+accepted_samples &lt;-<span class="st"> </span>samples[A_or_R]
+<span class="kw">mean</span>(accepted_samples)</code></pre>
+<pre><code>## [1] 0.006658</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sd</span>(accepted_samples)</code></pre>
+<pre><code>## [1] 1.014</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(accepted_samples)/N  ## true P(accept) = 0.6577</code></pre>
+<pre><code>## [1] 0.6556</code></pre>
+</section><section class="slide level2">
+
+<p><img src="figure/ar_example_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="example-normal-from-doubly-exponential">Example: Normal from Doubly Exponential</h3>
+<ul>
+<li><p>Cauchy tail <span class="math">\(x^{-2}\)</span> is much heavier than the normal tail <span class="math">\(e^{-x^2}\)</span></p></li>
+<li>Try the doubly exponential distribution <span class="math">\(g(x) = \frac{1}{2} e^{-|x|}\)</span>
+<ul>
+<li>lighter than Cauchy but is still heavier than normal</li>
+</ul></li>
+</ul>
+<p><span class="math">\[\frac{f(x)}{g(x)} = \sqrt{\frac{2}{\pi}}e^{|x|-x^2/2}\]</span> is maximized at <span class="math">\(x=\pm 1\)</span> and the maximum is <span class="math">\(M=\sqrt{\frac{2 e}{\pi}}\)</span></p>
+<ul>
+<li>The acceptance rate is <span class="math">\(\sqrt{\frac{\pi }{2e}} \approx 0.7602\)</span>
+<ul>
+<li>higher than using Cauchy as the instrumental density</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>
+M &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="dv">2</span> *<span class="st"> </span><span class="kw">exp</span>(<span class="dv">1</span>)/pi)
+samples &lt;-<span class="st"> </span><span class="kw">rexp</span>(N) *<span class="st"> </span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">1</span>, -<span class="dv">1</span>), N, <span class="dt">replace =</span> <span class="ot">TRUE</span>)
+U &lt;-<span class="st"> </span><span class="kw">runif</span>(N)
+A_or_R &lt;-<span class="st"> </span>U &lt;=<span class="st"> </span><span class="kw">dnorm</span>(samples)/(M *<span class="st"> </span><span class="fl">0.5</span> *<span class="st"> </span><span class="kw">dexp</span>(<span class="kw">abs</span>(samples)))
+accepted_samples &lt;-<span class="st"> </span>samples[A_or_R]
+<span class="kw">mean</span>(accepted_samples)</code></pre>
+<pre><code>## [1] -0.008401</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sd</span>(accepted_samples)</code></pre>
+<pre><code>## [1] 0.9811</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(accepted_samples)/N  ## true P(accept) = 0.7602</code></pre>
+<pre><code>## [1] 0.7648</code></pre>
+</section><section class="slide level2">
+
+<p><img src="figure/ar_example_double_exp_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="example-beta-from-uniform">Example: Beta from Uniform</h3>
+<ul>
+<li><span class="math">\(f\)</span> is a beta density: <span class="math">\(f(x) = \frac{x^{a-1}(1-x)^{b-1}}{B(a,b)}\)</span>, <span class="math">\(0\leq x\leq 1\)</span>, with <span class="math">\(a, b&gt;1\)</span></li>
+<li><span class="math">\(g\)</span> is uniform density: <span class="math">\(g(x) = 1\)</span>, <span class="math">\(0\leq x\leq 1\)</span></li>
+</ul>
+<p><span class="math">\[\frac{f(x)}{g(x)} = \frac{x^{a-1}(1-x)^{b-1}}{B(a,b)} \]</span> is maximized at <span class="math">\(x=\frac{a-1}{a+b-2}\)</span> and its maximum is</p>
+<p><span class="math">\[M = \frac{(a-1)^{a-1}(b-1)^{b-1}}{(a+b-2)^{a+b-2}B(a,b)}\]</span></p>
+<ul>
+<li>Assume <span class="math">\(a = 2.5\)</span> and <span class="math">\(b=4.2\)</span>. The acceptance rate is 0.4733</li>
+</ul>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>
+a &lt;-<span class="st"> </span><span class="fl">2.5</span>
+b &lt;-<span class="st"> </span><span class="fl">4.2</span>
+M &lt;-<span class="st"> </span>(a -<span class="st"> </span><span class="dv">1</span>)^(a -<span class="st"> </span><span class="dv">1</span>) *<span class="st"> </span>(b -<span class="st"> </span><span class="dv">1</span>)^(b -<span class="st"> </span><span class="dv">1</span>)/(a +<span class="st"> </span>b -<span class="st"> </span><span class="dv">2</span>)^(a +<span class="st"> </span>b -<span class="st"> </span><span class="dv">2</span>)/<span class="kw">beta</span>(a, b)
+samples &lt;-<span class="st"> </span><span class="kw">runif</span>(N)
+U &lt;-<span class="st"> </span><span class="kw">runif</span>(N)
+A_or_R &lt;-<span class="st"> </span>U &lt;=<span class="st"> </span><span class="kw">dbeta</span>(samples, a, b)/M
+accepted_samples &lt;-<span class="st"> </span>samples[A_or_R]
+<span class="kw">mean</span>(accepted_samples)  ## true mean is a/(a+b) = 0.3731</code></pre>
+<pre><code>## [1] 0.3745</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">var</span>(accepted_samples)  ## true variance is ab/(a+b)^2/(a+b+1) = 0.0304 </code></pre>
+<pre><code>## [1] 0.03065</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(accepted_samples)/N  ## true P(accept) = 0.4733</code></pre>
+<pre><code>## [1] 0.4675</code></pre>
+</section><section class="slide level2">
+
+<p><img src="figure/ar_example_beta_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="remarks-2">Remarks</h3>
+<ul>
+<li>If the target density <span class="math">\(f\)</span> has a <em>bounded</em> support, then we can always choose the uniform distribution on the support of <span class="math">\(f\)</span> as the instrumental density</li>
+<li>Then, <span class="math">\(M=\max_x f(x)\)</span></li>
+</ul>
+</section></section>
+<section><section id="markov-chain-monte-carlo" class="titleslide slide level1"><h1>5. Markov Chain Monte Carlo</h1></section><section id="introduction-1" class="slide level2">
+<h1>Introduction</h1>
+<ul>
+<li>The posterior distribution in Bayesian statistics is of the form <span class="math">\(p(\theta|y) \propto p(\theta)p(y|\theta)\)</span>
+<ul>
+<li>So it is often known up to a normalizing constant, i.e. <span class="math">\(p(\theta|y) = C p(\theta)p(y|\theta)\)</span> for some <span class="math">\(C&gt;0\)</span> but <span class="math">\(C\)</span> is difficult or impossible to compute</li>
+</ul></li>
+<li>The basic idea of MCMC is to construct a Markov chain whose <em>stationary</em> distribution is the distribution of interest
+<ul>
+<li>The normalizing constant is not necessary in the process</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>The literature on MCMC is enormous
+<ul>
+<li><em>Monte Carlo Statistical Methods</em>, C. P. Robert and G. Casella, 2nd ed., 2004</li>
+</ul></li>
+<li>We only introduce three simple MCMC algorithms, but their usage dominates in a great number of applications
+<ul>
+<li>Slice sampler</li>
+<li>Metropolis-Hastings algorithm</li>
+<li>Gibbs sampler</li>
+</ul></li>
+</ul>
+</section><section id="slice-sampler" class="slide level2">
+<h1>Slice Sampler</h1>
+<ul>
+<li><strong>Fundamental Theorem of Simulation</strong>: Simulating <span class="math">\(X\sim f(x)\)</span> is equivalent to simulating <span class="math">\[(X, U) \sim \mathrm{Uniform}\{(x,u):0\leq u\leq f(x)\}\]</span></li>
+</ul>
+<p><img src="figure/fundamental_sim_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="idea">Idea</h3>
+<ul>
+<li>Construct a <em>random walk</em> in the region <span class="math">\(A=\{(x,u):0\leq u\leq f(x)\}\)</span>, whose stationary distribution is the uniform distribution on <span class="math">\(A\)</span>
+<ul>
+<li>Do random jumps alternately in vertical and horizontal directions</li>
+<li>Vertical: uniform on <span class="math">\(\{u: 0\leq u\leq f(x)\}\)</span></li>
+<li>Horizontal: uniform on <span class="math">\(\{x: f(x)\geq u\}\)</span>, i.e. “slice”</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="slice-sampler-algorithm">Slice Sampler Algorithm</h3>
+<p>For <span class="math">\(t=1,\ldots,T\)</span>, when at <span class="math">\((x^{(t)}, u^{(t)})\)</span> simulate</p>
+<ol type="1">
+<li><span class="math">\(u^{(t+1)} \sim \mathrm{Uniform}(0, f(x^{(t)}))\)</span></li>
+<li><span class="math">\(x^{(t+1)} \sim \mathrm{Uniform}(A^{(t+1)})\)</span>, where <span class="math">\(A^{(t+1)} = \{x: f(x)\geq u^{(t+1)}\}\)</span>.</li>
+</ol>
+<p>Then, <span class="math">\(\{x^{(t)}:t=1,\ldots,T\}\)</span> are samples generated from <span class="math">\(f(x)\)</span></p>
+<p><img src="figure/slice_sampler_plot_1.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<p><img src="figure/slice_sampler_plot_2.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<p><img src="figure/slice_sampler_plot_3.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="example-1-1">Example 1</h3>
+<ul>
+<li>Target density <span class="math">\(f(x) = \frac{1}{2}e^{-\sqrt{x}}\)</span>, <span class="math">\(x\geq 0\)</span></li>
+<li>Vertical: <span class="math">\(U|x \sim \mathrm{Uniform}(0, \frac{1}{2}e^{-\sqrt{x}})\)</span></li>
+<li>Horizontal: <span class="math">\(X|u \sim \mathrm{Uniform}(0, \log^2(2u))\)</span></li>
+</ul>
+<p><img src="figure/slice_example_plot_1.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">T &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>
+x &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>, T)
+y &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">0.1</span>, T)
+for (t in <span class="dv">1</span>:(T -<span class="st"> </span><span class="dv">1</span>)) {
+    y[t +<span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="kw">exp</span>(-<span class="kw">sqrt</span>(x[t]))/<span class="dv">2</span>)
+    x[t +<span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>, <span class="dv">0</span>, (<span class="kw">log</span>(<span class="dv">2</span> *<span class="st"> </span>y[t +<span class="st"> </span><span class="dv">1</span>]))^<span class="dv">2</span>)
+}</code></pre>
+<p><img src="figure/slice_example_plot_2.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="example-2-truncated-normal">Example 2 (Truncated Normal)</h3>
+<ul>
+<li><p>Target density: <span class="math">\(f(x)\propto f_1(x)=e^{-(x+3)^2/2}\mathbb{I}_{[0, 1]}(x)\)</span></p></li>
+<li>Vertical: <span class="math">\(U|x \sim \mathrm{Uniform}(0, e^{-(x+3)^2/2})\)</span></li>
+<li><p>Horizontal: <span class="math">\(X|u \sim \mathrm{Uniform}(0, \min(1,\sqrt{-2\log(u)}-3))\)</span></p></li>
+</ul>
+<p><img src="figure/slice_example_plot_3.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">T &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>
+x &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">0.25</span>, T)
+y &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">0.0025</span>, T)
+for (t in <span class="dv">1</span>:(T -<span class="st"> </span><span class="dv">1</span>)) {
+    y[t +<span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="kw">exp</span>(-(x[t] +<span class="st"> </span><span class="dv">3</span>)^<span class="dv">2</span>/<span class="dv">2</span>))
+    x[t +<span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="kw">min</span>(<span class="dv">1</span>, <span class="kw">sqrt</span>(-<span class="dv">2</span> *<span class="st"> </span><span class="kw">log</span>(y[t +<span class="st"> </span><span class="dv">1</span>])) -<span class="st"> </span><span class="dv">3</span>))
+}</code></pre>
+<p><img src="figure/slice_example_plot_4.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="remarks-3">Remarks</h3>
+<ul>
+<li><p><span class="math">\(\{x^{(t)}:t=1,\ldots,T\}\)</span> form a Markov chain and its stationary distribution has the target density <span class="math">\(f(x)\)</span></p></li>
+<li><p>Advantage: it does not need an instrumental distribution or the normalizing constant of the target distribution</p></li>
+<li><p>Disadvantage: it may be difficult to compute the region <span class="math">\(\{x: f(x)\geq u\}\)</span>, especially for multi-dimensional cases</p></li>
+</ul>
+</section><section id="metropolis-hastings-algorithm" class="slide level2">
+<h1>Metropolis-Hastings Algorithm</h1>
+<ul>
+<li><p>Metropolis algorithm was proposed in 1953</p></li>
+<li><p>Hastings generalized the algorithm in 1970 and introduced it to the statistics community</p></li>
+<li>Generate a sequence of samples that form a Markov chain whose stationary distribution is the target distribution
+<ul>
+<li>The next sample value is dependent only on the current sample value<br /></li>
+<li>At each iteration, a candidate is proposed from a simple distribution and then an acceptance-rejection step is done</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>Similar as the acceptance-rejection method, the MH algorithm requires an <em>instrumental</em> distribution <span class="math">\(q(y|x)\)</span> that is easy to simulate from</li>
+</ul>
+<p>For <span class="math">\(t=1,\ldots, T\)</span>, when at <span class="math">\(x^{(t)}\)</span></p>
+<ol type="1">
+<li><p>Simulate <span class="math">\(y_t\sim q(y|x^{(t)})\)</span></p></li>
+<li><p>Simulate <span class="math">\(U\sim \mathrm{Uniform}(0,1)\)</span> and take <span class="math">\[x^{(t+1)} = \left\{
+\begin{array}{ll}
+y_t, &amp; \mbox{if } U \leq  \frac{f(y_t)}{f(x^{(t)})}\frac{q(x^{(t)}|y_t)}{q(y_t|x^{(t)})}\\
+x^{(t)}, &amp; \mbox{otherwise.}
+\end{array}
+\right.\]</span></p></li>
+</ol>
+</section><section class="slide level2">
+
+<h3 id="remarks-4">Remarks</h3>
+<ul>
+<li><p><span class="math">\(x^{(1)}, x^{(2)}, \ldots\)</span> are correlated</p></li>
+<li>The chain may take the same value several times in a row
+<ul>
+<li>Possibly gets stuck if the acceptance rate is too low</li>
+</ul></li>
+<li>The warm-up period must be discarded to alleviate the initialization bias
+<ul>
+<li>E.g., discard <span class="math">\(\{x^{(t)}:t=1,\ldots,\tau\}\)</span> and only use <span class="math">\(\{x^{(t)}:t=\tau+1,\ldots,T\}\)</span> to approximate the target distribution</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Never move to values with <span class="math">\(f(y)=0\)</span></p></li>
+<li>Only depends on ratios <span class="math">\(f(y)/f(x)\)</span> and <span class="math">\(q(x|y)/q(y|x)\)</span>
+<ul>
+<li>Independent of normalizing constants</li>
+</ul></li>
+<li><p><em>Always</em> accepts <span class="math">\(y_t\)</span> such that <span class="math">\[\frac{f(y_t)}{q(y_t|x^{(t)})} &gt; \frac{f(x^{(t)})}{q(x^{(t)}|y_t)}\]</span></p></li>
+<li><p>If <span class="math">\(y_t\)</span> decreases the ratio, it is <em>sometimes</em> rejected but may still be accepted</p></li>
+<li>There are two typical variants
+<ul>
+<li>Independent MH</li>
+<li>Random walk MH</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="independent-metropolis-hastings">Independent Metropolis-Hastings</h3>
+<ul>
+<li>Instrumental distribution <span class="math">\(q\)</span> is independent of the current position <span class="math">\(x^{(t)}\)</span>, i.e. <span class="math">\(q(y|x) = g(y)\)</span></li>
+</ul>
+<p>For <span class="math">\(t=1,\ldots, T\)</span>, when at <span class="math">\(x^{(t)}\)</span></p>
+<ol type="1">
+<li><p>Simulate <span class="math">\(y_t\sim g(y)\)</span></p></li>
+<li><p>Simulate <span class="math">\(U\sim \mathrm{Uniform}(0,1)\)</span> and take <span class="math">\[x^{(t+1)} = \left\{
+\begin{array}{ll}
+y_t, &amp; \mbox{if } U\leq  \frac{f(y_t)}{f(x^{(t)})}\frac{g(x^{(t)})}{g(y_t)} \\
+x^{(t)}, &amp; \mbox{otherwise.}
+\end{array}
+\right.\]</span></p></li>
+</ol>
+</section><section class="slide level2">
+
+<h3 id="remarks-5">Remarks</h3>
+<ul>
+<li><p>Can be viewed as a generalization of the Acceptance-Rejection method</p></li>
+<li>The A-R sample is i.i.d., whereas the MH sample is correlated</li>
+<li>The A-R acceptance step requires the calculation of <span class="math">\(M\)</span> (i.e. <span class="math">\(f(x)\leq Mg(x)\)</span>), where MH does not
+<ul>
+<li>Independent MH is A-R “for lazy people”</li>
+</ul></li>
+<li>It can be shown that if <span class="math">\(f(x)\leq Mg(x)\)</span>, then the acceptance rate of independent MH is at least <span class="math">\(1/M\)</span>
+<ul>
+<li>So independent MH accepts more proposed samples than A-R at the cost of losing independence among samples</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="example-2">Example</h3>
+<ul>
+<li>Target: <span class="math">\(f(x) =\frac{1}{\sqrt{2\pi}} e^{-x^2/2}\)</span></li>
+<li><p>Instrumental: <span class="math">\(g(x) = \frac{1}{2}e^{-|x|}\)</span></p></li>
+<li><p>The acceptance probability in independent MH is <span class="math">\[\min\{1, \exp[(|x^{(t)}|-|y_t|)((|x^{(t)}|+|y_t|) / 2-1)]\}\]</span></p></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>; x &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, N); accept_count &lt;-<span class="st"> </span><span class="dv">0</span>;
+y &lt;-<span class="st"> </span><span class="kw">rexp</span>(N) *<span class="st"> </span><span class="kw">sample</span>(<span class="kw">c</span>(<span class="dv">1</span>, -<span class="dv">1</span>), <span class="dt">size=</span>N, <span class="dt">replace=</span><span class="ot">TRUE</span>) ## simulate double exp.
+U &lt;-<span class="st"> </span><span class="kw">runif</span>(N)
+for (t in <span class="dv">1</span>:(N<span class="dv">-1</span>)){    
+    if (U[t] &lt;=<span class="st"> </span><span class="kw">exp</span>((<span class="kw">abs</span>(x[t])-<span class="kw">abs</span>(y[t])) *<span class="st"> </span>((<span class="kw">abs</span>(x[t]+<span class="kw">abs</span>(y[t])))/<span class="dv">2-1</span>))){
+        accept_count &lt;-<span class="st"> </span>accept_count +<span class="st"> </span><span class="dv">1</span>
+        x[t<span class="dv">+1</span>] &lt;-<span class="st"> </span>y[t]
+    }
+    else
+        x[t<span class="dv">+1</span>] &lt;-<span class="st"> </span>x[t]
+}
+accept_count /<span class="st"> </span>N ## acceptance rate for A-R is 0.7602</code></pre>
+<pre><code>## [1] 0.8402</code></pre>
+</section><section class="slide level2">
+
+<ul>
+<li>Despite of more efficient use of proposed samples (higher acceptance rate), the MH sample approximates the target distribution worse than the A-R samples
+<ul>
+<li>A-R is exact, while MH needs the Markov chain to converge to the target distribution and any finite sample is merely an approximation</li>
+<li>“Penalty for being lazy!”</li>
+</ul></li>
+</ul>
+<p><img src="figure/indMH_example_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="random-walk-metropolis-hastings">Random Walk Metropolis-Hastings</h3>
+<ul>
+<li><p>This is the original algorithm in Metropolis et al. (1953), thus called the Metropolis algorithm</p></li>
+<li>Independent MH is sometimes difficult to implement
+<ul>
+<li>Construction of instrumental distribution may be difficult</li>
+<li>Instrumental distribution is a <em>global</em> proposal and ignores <em>local</em> information: <span class="math">\(q(y|x)\)</span> is independent of <span class="math">\(x\)</span></li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>Simulate <span class="math">\(y_t = x^{(t)} + \epsilon_t\)</span>, where <span class="math">\(\epsilon_t\)</span> is random perturbation
+<ul>
+<li><span class="math">\(\epsilon_t\)</span> independent of <span class="math">\(x^{(t)}\)</span>, having a <em>symmetric</em> distribution <span class="math">\(g\)</span> with mean 0</li>
+</ul></li>
+<li>Instrumental distribution <span class="math">\(q(y|x) = g(y-x)\)</span></li>
+</ul>
+<p>For <span class="math">\(t=1,\ldots, T\)</span>, when at <span class="math">\(x^{(t)}\)</span></p>
+<ol type="1">
+<li><p>Simulate <span class="math">\(y_t \sim g(y - x^{(t)}) \)</span></p></li>
+<li><p>Simulate <span class="math">\(U\sim \mathrm{Uniform}(0,1)\)</span> and take <span class="math">\[x^{(t+1)} = \left\{
+\begin{array}{ll}
+y_t, &amp; \mbox{if } U\leq \frac{f(y_t)}{f(x^{(t)})} \\
+x^{(t)}, &amp; \mbox{otherwise.}
+\end{array}
+\right.\]</span></p></li>
+</ol>
+</section><section class="slide level2">
+
+<h3 id="remarks-6">Remarks</h3>
+<ul>
+<li>Given a proposed candidate <span class="math">\(y_t\)</span>, its acceptance probability is independent of <span class="math">\(g\)</span></li>
+<li>However, the overal acceptance rate of the algorithm does depend on <span class="math">\(g\)</span>
+<ul>
+<li>It determines how the algorithm explores the state space to propose candidates</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>If a candidate is a more probable than the current point (i.e. <span class="math">\(f(y_t)\geq f(x^{(t)})\)</span>), then we <em>always</em> accept the move<br /></li>
+<li><p>Otherwise, we <em>sometimes</em> reject the move; the more relative drop in likelihood, the more likely we are to reject the move</p></li>
+<li><p>So in the long run, the chain tends to stay in high-density regions of <span class="math">\(f(x)\)</span>, while occasionally visiting low-density regions</p></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="example-3">Example</h3>
+<ul>
+<li>Target: <span class="math">\(f(x) = \frac{1}{2}e^{-x^2/2}\)</span></li>
+<li>Instrumental: <span class="math">\(g(x) = \frac{1}{2\delta}\)</span> for <span class="math">\(x\in[-\delta, \delta]\)</span></li>
+<li><span class="math">\(\delta\)</span> controls the “scale” of the random walk
+<ul>
+<li>small <span class="math">\(\delta\)</span> means high acceptance rate</li>
+</ul></li>
+<li>The acceptance probability in random walk MH is <span class="math">\[\min\{1, \exp[({x^{(t)}}^2-y_t^2)]/2\}\]</span></li>
+</ul>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>; x &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, N); delta &lt;-<span class="st"> </span><span class="fl">0.1</span>; accept_count &lt;-<span class="st"> </span><span class="dv">0</span>;
+epsilon &lt;-<span class="st"> </span><span class="kw">runif</span>(N, -delta, delta)  ## simulate uniform on [-delta, delta]
+U &lt;-<span class="st"> </span><span class="kw">runif</span>(N)
+for (t in <span class="dv">1</span>:(N<span class="dv">-1</span>)){ 
+    y_t &lt;-<span class="st"> </span>x[t] +<span class="st"> </span>epsilon[t]
+    if (U[t] &lt;=<span class="st"> </span><span class="kw">exp</span>((x[t]^<span class="dv">2</span> -<span class="st"> </span>y_t^<span class="dv">2</span>)/<span class="dv">2</span>)){
+        accept_count &lt;-<span class="st"> </span>accept_count +<span class="st"> </span><span class="dv">1</span>
+        x[t<span class="dv">+1</span>] &lt;-<span class="st"> </span>y_t    
+    }
+    else
+        x[t<span class="dv">+1</span>] &lt;-<span class="st"> </span>x[t]
+}
+accept_count /<span class="st"> </span>N;   ## maybe too high... </code></pre>
+<pre><code>## [1] 0.981</code></pre>
+</section><section class="slide level2">
+
+<ul>
+<li>Unlike the acceptance-rejection method, having a high acceptance rate is not necessarily desirable for random walk MH.
+<ul>
+<li>It may lead to poor exploration of the tails of the target density and slow convergence to the stationary distribution</li>
+</ul></li>
+</ul>
+<p><img src="figure/rwMH_example_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<p><img src="figure/rwMH_example_plot2.png" title="" alt="" style="display: block; margin: auto;" /></p>
+<center>
+Though the acceptance rate is lower, we get a better histogram for a larger value of <span class="math">\(\delta\)</span>
+</center>
+</section><section class="slide level2">
+
+<h3 id="optimizing-acceptance-rate">Optimizing Acceptance Rate</h3>
+<ul>
+<li><p>How do we choose the instrumental distribution <span class="math">\(q\)</span> when developing a MH algorithm?</p></li>
+<li>A criterion is the acceptance rate
+<ul>
+<li>It can be easily estimated by the empirical frequency of acceptance</li>
+</ul></li>
+<li><p>In contrast to the A-R method, maximizing the acceptance rate is not neccesarily the best, especially for random walk MH</p></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>For independent MH, we can optimize the algorithm by maximizing acceptance rate</p></li>
+<li>For random walk MH, it gets more complicated…
+<ul>
+<li>If the acceptance rate is high, the random walk is moving too slowly on the surface of <span class="math">\(f\)</span>, and it may get stuck in a high-density region</li>
+<li>If the acceptance rate is low, the random walk is moving too quickly on the surface of <span class="math">\(f\)</span>, and it may miss an important but isolated mode of <span class="math">\(f\)</span></li>
+<li>Nevertheless, a low acceptance rate is less of an issue</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>Target is a normal mixture <span class="math">\(0.2\mathcal N(-5, 4) + 0.5\mathcal N(0, 1) + 0.3\mathcal N(3, 0.25)\)</span></li>
+<li>Instrumental is normal with mean 0 and sd <span class="math">\(\delta\)</span> for RW-MH</li>
+</ul>
+<p><img src="figure/rwMH_example_plot3.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<p><img src="figure/rwMH_example_plot4.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<ul>
+<li>Gelman, Gilks and Roberts (1995) suggested:</li>
+</ul>
+<blockquote>
+<p>In small dimensions, aim at an average acceptance rate of 50%. In large dimensions, at an average acceptance rate of 25%.</p>
+</blockquote>
+</section><section id="gibbs-sampler" class="slide level2">
+<h1>Gibbs Sampler</h1>
+<ul>
+<li><p>Proposed by S. Geman and D. Geman in 1984</p></li>
+<li><p>Named after the physicist J. Gibbs in reference to an analogy between the algotirhm and statistical physics</p></li>
+<li>Used to simulate a <em>multivariate</em> distribution
+<ul>
+<li>Decompose joint distribution into a sequence of one-dimensional conditional distributions</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Target <span class="math">\(f\)</span> is the joint distribution of <span class="math">\(\mathbf{X}=(X_1,\ldots,X_n)\)</span></p></li>
+<li><p>Suppose we can simulate from the <em>full conditionals</em> <span class="math">\[X_i | \mathbf{x}_{-i} \sim f_i(x_i| \mathbf{x}_{-i})\]</span> for <span class="math">\(i=1,\ldots,n\)</span>, where <span class="math">\(\mathbf{x}_{-i} = (x_1,\ldots,x_{i-1}, x_{i+1},\ldots,x_n)\)</span></p></li>
+<li><p>Then we can construct a Markov chain <span class="math">\(\{\mathbf{X}^{(t)} \}\)</span> whose stationary distribution is <span class="math">\(f\)</span></p></li>
+</ul>
+</section><section class="slide level2">
+
+<p>For <span class="math">\(t=1,\ldots, T\)</span>, given <span class="math">\(\mathbf{x}^{(t)} = (x^{(t)}_1,\ldots,x^{(t)}_n)\)</span>, simulate</p>
+<ul>
+<li><p><span class="math">\(X^{(t+1)}_1 \sim f_1(x_1| \mathbf{x}_2^{(t)}, \mathbf{x}_3^{(t)},\ldots, \mathbf{x}_n^{(t)})\)</span></p></li>
+<li><p><span class="math">\(X^{(t+1)}_2 \sim f_2(x_2| \mathbf{x}_1^{(t+1)}, \mathbf{x}_3^{(t)},\ldots, \mathbf{x}_n^{(t)})\)</span> <span class="math">\[\vdots\]</span></p></li>
+<li><p><span class="math">\(X^{(t+1)}_n \sim f_n(x_n| \mathbf{x}_1^{(t+1)}, \mathbf{x}_2^{(t+1)},\ldots, \mathbf{x}_{n-1}^{(t+1)})\)</span></p></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="example-4">Example</h3>
+<ul>
+<li><p>Target is <span class="math">\(f(x,y) \propto e^{-(x^2y^2+x^2+y^2-8x-8y)/2}\)</span></p></li>
+<li><p>The full conditionals are <span class="math">\[f(x|y) \propto e^{-[(y^2+1)x^2-8x]/2} \]</span> and <span class="math">\[f(y|x) \propto e^{-[(x^2+1)y^2-8y]/2}\]</span></p></li>
+<li><p>Noting the quadratic form in the exponent, the full conditionals are simply normal distributions <span class="math">\[x|y \sim \mathcal N\left(4/(1+y^2), 1/(1+y^2)\right)\]</span> and <span class="math">\[y|x \sim \mathcal N\left(4/(1+x^2), 1/(1+x^2)\right)\]</span></p></li>
+</ul>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">10</span>^<span class="dv">4</span>; x &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, N); y &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, N);
+for (t in <span class="dv">1</span>:(N<span class="dv">-1</span>)){ 
+    x[t<span class="dv">+1</span>] &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean=</span><span class="dv">4</span>/(<span class="dv">1</span>+y[t]^<span class="dv">2</span>), <span class="dt">sd=</span><span class="dv">1</span>/<span class="kw">sqrt</span>(<span class="dv">1</span>+y[t]^<span class="dv">2</span>)) 
+    y[t<span class="dv">+1</span>] &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean=</span><span class="dv">4</span>/(<span class="dv">1</span>+x[t<span class="dv">+1</span>]^<span class="dv">2</span>), <span class="dt">sd=</span><span class="dv">1</span>/<span class="kw">sqrt</span>(<span class="dv">1</span>+x[t<span class="dv">+1</span>]^<span class="dv">2</span>))     
+}</code></pre>
+<p><img src="figure/Gibbs_example_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<h3 id="summary">Summary</h3>
+<ul>
+<li><p>Slice sampler does not need an instrumental distribution but requires one to compute the “inverse” of the density function</p></li>
+<li>Metropolis-Hastings requires carefully choosing an instrumental distribution
+<ul>
+<li>Independent MH: instrumental density should have “heavier” tails (similar as A-R method) than the target density to guarantee convergence; it can be optimized by maximizing acceptance rate</li>
+<li>Random walk MH: more complicated… high acceptance rate is not necessarily desirable and low acceptance rate is less of an issue</li>
+</ul></li>
+<li><p>Gibbs sampler converts a multi-dimensional distribution to a sequence of one-dimensional conditional distributions (i.e. full conditionals)</p></li>
+</ul>
+</section></section>
+<section><section id="an-application-in-finance" class="titleslide slide level1"><h1>6. An Application in Finance</h1></section><section id="background" class="slide level2">
+<h1>Background</h1>
+<ul>
+<li><p>Companies may default especially in a bad economy</p></li>
+<li><p><span class="math">\(N(t)\)</span> is the accumulated number of defaults since time 0</p></li>
+<li><p><span class="math">\(x(t)\)</span> is the “state” of the economy, which can not be observed directly</p></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><span class="math">\(N(t)\)</span> can be modeled as doubly stochastic Poisson process with arrival rate <span class="math">\(\lambda(t)\)</span>
+<ul>
+<li>Conditional on <span class="math">\(\{\lambda(t):0\leq t\leq T\}\)</span>, <span class="math">\(\{N(t):0\leq t\leq T\}\)</span> is an inhomogeneous Poisson process, i.e. <span class="math">\(N(t)\)</span> has a Poisson distribution with mean <span class="math">\(\int_0^t \lambda(s)\, ds\)</span></li>
+</ul></li>
+<li><p>Assume <span class="math">\(\lambda(t)=\mu e^{x(t)}\)</span> and <span class="math">\[d x(t) = - x(t) dt + \sigma d W(t),\]</span> where <span class="math">\(W(t)\)</span> is a standard Brownian motion</p></li>
+<li><p>We are concerned with the estimation of the parameters <span class="math">\(\Theta=(\mu, \kappa, \sigma)\)</span></p></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>This model can be discretized into a <em>state space</em> model <span class="math">\[
+\left\{
+\begin{array}{l}
+Y_t | x_t, \Theta \sim \mathrm{Poisson}(\mu e^{x_t}) \\
+x_t | x_{t-1}, \Theta \sim \mathrm{Normal}((1-\kappa)x_{t-1}, \sigma^2)
+\end{array}
+\right.
+\]</span> where <span class="math">\(Y_t = N(t) - N(t-1)\)</span> is the number of defaults during <span class="math">\([t-1, t]\)</span></li>
+</ul>
+</section><section class="slide level2">
+
+<pre class="sourceCode r"><code class="sourceCode r">T &lt;-<span class="st"> </span><span class="dv">100</span>; 
+kappa &lt;-<span class="st"> </span><span class="fl">0.3</span>; sigma &lt;-<span class="st"> </span><span class="fl">0.1</span>; mu &lt;-<span class="st"> </span><span class="dv">5</span>;
+x_0 &lt;-<span class="st"> </span><span class="dv">0</span>;
+x &lt;-<span class="st"> </span><span class="kw">rep</span>(x_0, T<span class="dv">+1</span>);
+for (t in <span class="dv">1</span>:T)
+    x[t<span class="dv">+1</span>] &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean=</span>(<span class="dv">1</span>-kappa)*x[t], <span class="dt">sd=</span>sigma)     
+y &lt;-<span class="st"> </span><span class="kw">rpois</span>(T, mu*<span class="kw">exp</span>(x[<span class="dv">2</span>:(T<span class="dv">+1</span>)]))</code></pre>
+<p><img src="figure/default_data_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section class="slide level2">
+
+<ul>
+<li><p>A challenge here, and also for other state space models, is that the “states” are unobservable (i.e. latent variables)</p></li>
+<li>Maximum likelihood estimation typically fails for state space models because all the latent variables must be “integrated out” in order to compute the likelihood function
+<ul>
+<li>Exceptions include linear Gaussian models and hidden Markov chains with finite state space</li>
+</ul></li>
+<li><p>Given the data <span class="math">\(\mathbf Y=\{Y_1,\ldots, Y_T\}\)</span>, Bayesian inference is interested in the joint posterior distribution of the parameters <span class="math">\(\Theta\)</span> and the state variables <span class="math">\(\mathbf{x}=(x_1,\ldots,x_T)\)</span> <span class="math">\[p(\Theta, \mathbf x|\mathbf Y)\]</span></p></li>
+</ul>
+</section><section id="bayesian-analysis" class="slide level2">
+<h1>Bayesian Analysis</h1>
+<ul>
+<li>Gibbs sampler indicates we can simulate full conditionals
+<ul>
+<li><span class="math">\(p(\mu|\kappa, \sigma^2, \mathbf x,\mathbf Y)\)</span></li>
+<li><span class="math">\(p(\kappa|\mu, \sigma^2, \mathbf x,\mathbf Y)\)</span></li>
+<li><span class="math">\(p(\sigma^2|\mu,\kappa, \mathbf x,\mathbf Y)\)</span></li>
+<li><span class="math">\(p(x_t|\mu,\kappa, \sigma^2,\mathbf x_{-t}, \mathbf Y)\)</span>, <span class="math">\(t=1,\ldots, T\)</span></li>
+</ul></li>
+<li>Conjugate priors can be found for the first three but the last one needs Metropolis-Hastings</li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>We first write down the <em>complete likelihood</em> <span class="math">\(p(\mathbf Y, \mathbf x|\Theta)\)</span> <span class="math">\[
+\begin{align*}
+p(\mathbf Y, \mathbf x|\Theta) =&amp; \prod_{t=1}^T p(Y_t|x_t, \mu)p(x_t|x_{t-1},\kappa,\sigma^2) \\
+\propto &amp; \prod_{t=1}^T (\mu e^{x_t})^{Y_t}e^{-\mu e^{x_t}}\cdot e^{-[x_{t}-(1-\kappa)x_{t-1})]^2 / (2\sigma^2)}
+\end{align*}\]</span> where <span class="math">\[p(Y_t|x_t, \mu) = \frac{(\mu e^{x_t})^{Y_t}}{Y_t!}e^{-\mu e^{x_t}}\]</span> and <span class="math">\[p(x_t|x_{t-1},\kappa,\sigma^2) = \frac{1}{2\sigma^2}e^{-[x_{t}-(1-\kappa)x_{t-1})]^2 / (2\sigma^2)}\]</span></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Assume the priors of the parameters are independent</p></li>
+<li><p>Assume <span class="math">\(p(\mu)\)</span> is Gamma with shape <span class="math">\(a_1\)</span> and rate <span class="math">\(b_1\)</span>, <span class="math">\[
+\begin{align*}
+p(\mu|\kappa, \sigma^2, \mathbf x,\mathbf Y) \propto &amp; p(\mu|\kappa, \sigma^2) p(\mathbf Y, \mathbf x|\mu, \kappa, \sigma^2) \\
+\propto &amp; p(\mu) \prod_{t=1}^T p(Y_t|x_t, \mu) \\
+\propto &amp; \mu^{a_1-1}e^{-b_1\mu} \prod_{t=1}^T (\mu e^{x_t})^{Y_t}e^{-\mu e^{x_t}} \\
+\propto &amp; \mu^{a_1-1+\sum_t Y_t} \cdot e^{-\mu (b_1+\sum_t e^{x_t})}
+\end{align*}
+\]</span> so <span class="math">\(p(\mu|\kappa, \sigma^2, \mathbf x,\mathbf Y)\)</span> is Gamma with shape <span class="math">\(a_1+\sum_t Y_t\)</span> and rate <span class="math">\(b_1+\sum_t e^{x_t}\)</span></p></li>
+</ul>
+</section><section class="slide level2">
+
+<h3 id="exercise-1">Exercise 1</h3>
+<p>Assume <span class="math">\(p(\kappa)\)</span> is normal with mean <span class="math">\(a_2\)</span> and variance <span class="math">\(b_2^2\)</span>. Then <span class="math">\(p(\kappa|\mu, \sigma^2, \mathbf x,\mathbf Y)\)</span> is normal with mean <span class="math">\(B/A\)</span> and variance <span class="math">\(1/A\)</span>, where <span class="math">\[A = 1/b_2^2 + \textstyle\sum_t x_t^2/\sigma^2\]</span> and <span class="math">\[B = a_2/b_2^2 - \textstyle\sum_t x_{t-1}(x_t-x_{t-1})/\sigma^2\]</span></p>
+</section><section class="slide level2">
+
+<h3 id="exercise-2">Exercise 2</h3>
+<p>Assume <span class="math">\(p(\sigma^2)\)</span> is inverse Gamma (i.e. <span class="math">\(p(1/\sigma^2)\)</span> is Gamma) with shape <span class="math">\(a_3\)</span> and rate <span class="math">\(b_3\)</span>. Then <span class="math">\(p(\sigma^2|\mu,\kappa, \mathbf x,\mathbf Y)\)</span> is inverse Gamma with shape <span class="math">\(a_3+T/2\)</span> and scale <span class="math">\[b_3+\textstyle\sum_t[x_t-(1-\kappa)x_{t-1}]^2/2\]</span></p>
+</section><section class="slide level2">
+
+<h3 id="exercise-3">Exercise 3</h3>
+<p><span class="math">\(p(x_t|\mathbf x_{-t}, \mathbf Y, \Theta) \propto p(x_{t+1}|x_t, \Theta)p(x_t|x_{t-1}, \Theta)p(Y_t|x_t, \Theta)\)</span>, where <span class="math">\[
+\begin{align*}
+p(x_{t+1}|x_t, \Theta)\propto &amp; \exp\left(\textstyle-\frac{[x_{t+1}-(1-\kappa)x_t]^2}{2\sigma^2}\right) \\
+p(x_{t}|x_{t-1}, \Theta)\propto &amp; \exp\left(\textstyle-\frac{[x_{t}-(1-\kappa)x_{t-1}]^2}{2\sigma^2}\right) \\
+p(Y_t|x_t, \Theta) \propto &amp; \exp\left(\textstyle-\mu e^{x_t}+x_tY_t\right)
+\end{align*}\]</span></p>
+</section><section class="slide level2">
+
+<ul>
+<li><p>Note that the tail of <span class="math">\(p(x_t|\mathbf x_{-t}, \mathbf Y, \Theta)\)</span> is of the order <span class="math">\(\exp(-\mu e^{x_t})\)</span>, which is very light</p></li>
+<li>So we can use independent Metropolis-Hastings with a normal instrumental density
+<ul>
+<li>The mean is chosen to be 0 since <span class="math">\(x(t)\)</span> is an OU process with long-run average 0</li>
+</ul></li>
+</ul>
+</section><section id="mcmc-algorithm" class="slide level2">
+<h1>MCMC Algorithm</h1>
+<p>For <span class="math">\(k=1,\ldots, n\)</span>, given <span class="math">\((\mu^{(k)}, \kappa^{(k)}, \sigma^{(k)}, \mathbf x^{(k)})\)</span>,</p>
+<ol type="1">
+<li><p>Simulate <span class="math">\(\mu^{(k+1)}\)</span> from Gamma posterior <span class="math">\(p(\mu|\kappa^{(k)}, \sigma^{(k)}, \mathbf x^{(k)})\)</span></p></li>
+<li><p>Simulate <span class="math">\(\kappa^{(k+1)}\)</span> from normal posterior <span class="math">\(p(\kappa|\mu^{(k+1)}, \sigma^{(k)}, \mathbf x^{(k)})\)</span></p></li>
+<li><p>Simulate <span class="math">\({\sigma^{(k+1)}}^2\)</span> from inverse Gamma posterior <span class="math">\(p(\sigma^2|\mu^{(k+1)}, \kappa^{(k+1)}, \mathbf x^{(k)})\)</span></p></li>
+<li><p>Use independent MH to iteratively simulate <span class="math">\(x^{(k+1)}_t\)</span> from <span class="math">\(p(x_t|\mu^{(k+1)}, \kappa^{(k+1)}, \sigma^{(k+1)}, x_1^{(k+1)}, \ldots, x_{t-1}^{(k+1)}, x_{t+1}^{(k)},\ldots,x_T^{(k)} )\)</span>, for <span class="math">\(t=1,\ldots, T\)</span>, with a normal instrumental density with mean 0</p></li>
+</ol>
+</section><section class="slide level2">
+
+<pre><code>##     mu  kappa  sigma 
+## 5.0689 0.3321 0.1101</code></pre>
+<p><img src="figure/parameter_MCMC_plot.png" title="" alt="" style="display: block; margin: auto;" /></p>
+</section><section id="summary-1" class="slide level2">
+<h1>Summary</h1>
+<ul>
+<li><p>Bayesian inference + MCMC is powerful!</p></li>
+<li><p>However, fine turning instrumental distributions and hyperparameters requires great effort!</p></li>
+<li><p>Do not blindly trust the results. If something is counter-intuitive, make sure find out why!</p></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+
+  <script src="reveal.js/lib/js/head.min.js"></script>
+  <script src="reveal.js/js/reveal.min.js"></script>
+
+  <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        theme: 'simple', // available themes are in /css/theme
+        transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+//          { src: 'reveal.js/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; }, }
+//          { src: 'reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+]});
+    </script>
+    </body>
+</html>
