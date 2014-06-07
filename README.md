@@ -5,9 +5,9 @@ This is the teaching material for a short course (4~5 hours) on Bayesian inferen
 
 ## Outline
 
-The course consists of two parts: the first part introduces basic Bayesian inference and the second part MCMC algorithms. In the end, we discuss  Bayesian inference in state space models in finance for a comprehenstive application of conjugate priors, Metropolis-Hastings algorithm, and Gibbs sampler.
+The course consists of two parts: the first part introduces basic Bayesian inference and the second part MCMC algorithms. In the end, we discuss  Bayesian inference for state space models in finance for a comprehenstive application of conjugate priors, Metropolis-Hastings algorithm, and Gibbs sampler.
 
-1. What and why?
+1. What is Bayesian inference and why?
 2. One-parameter models
     + Binomial model
     + Poisson model
