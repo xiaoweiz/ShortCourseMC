@@ -1,6 +1,17 @@
-% Introduction to Bayesian Data Analysis
-% ZHANG Xiaowei
-% HKUST
+---
+title: Introduction to Bayesian Data Analysis
+author: ZHANG Xiaowei
+date: HKUST
+output: 
+    revealjs_presentation:
+        theme: simple
+        transition: linear
+        highlight: tango
+        center: true
+        pandoc_args: [
+            "--include-in-header", "custom.css"]  
+        self_contained: true
+---
 
 ## Self-introduction (张晓炜)
 
