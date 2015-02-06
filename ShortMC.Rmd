@@ -3,17 +3,17 @@ title: Introduction to Bayesian Data Analysis
 author: ZHANG Xiaowei
 date: HKUST
 output: 
-    revealjs_presentation:
-        theme: simple
-        transition: linear
-        highlight: tango
-        center: true
-        pandoc_args: [
-            "--include-in-header", "custom.css"]  
-        self_contained: true
+    revealjs::revealjs_presentation:
+            theme: simple
+            transition: linear
+            highlight: tango
+            center: true
+            pandoc_args: [
+                "--include-in-header", "custom.css"]  
+            self_contained: true
 ---
 
-## Self-introduction (张晓炜)
+## Self-introduction
 
 * Education
     + Ph.D. in Operations Research, Stanford University, 2011
@@ -125,19 +125,19 @@ output:
 
 * Bayesian inference begins with a formulation of joint beliefs about $\theta$ and $Y$
 
-    1. _Prior_ distribution $p(\theta)$: describes our belif about the $\theta$ before seeing the dataset $Y$
-    2. _Likelihood_ $p(y|\theta)$: describes our belief about $Y$
+    1. _Prior_ distribution $p(\theta)$: describes our belief about the $\theta$ before seeing the dataset $Y$
+    2. _Likelihood_ $p(Y|\theta)$: describes our belief about $Y$
      if we knew the value of $\theta$ 
         + also called _sampling model_
 
 
 ----
 
-* Once the dataset $Y$ becomes available, the last step is to update our belif about $\theta$
+* Once the dataset $Y$ becomes available, the last step is to update our belief about $\theta$
 
-    3. _Posterior_ distribution $p(\theta|y)$: describes our belief about $\theta$ having observed dataset $Y$
+    3. _Posterior_ distribution $p(\theta|Y)$: describes our belief about $\theta$ having observed dataset $Y$
 
-$$p(\theta|y) = \frac{p(y|\theta) p(\theta)}{\int p(y|\tilde\theta )p(\tilde\theta) \,\mathrm{d}\tilde\theta}$$
+$$p(\theta|Y) = \frac{p(Y|\theta) p(\theta)}{p(Y)} $$
 
 * _Bayes’ rule does not tell us what our beliefs should
 be, it tells us how they should change after seeing new information_
@@ -155,11 +155,14 @@ be, it tells us how they should change after seeing new information_
 
 ### Prior
 
-* Studies in compariable cities indicate that the infection rate ranges from 0.05 to 0.20, with an average of 0.10
-* There are infinately many candicates and we use one that is _analytically tractable_ for computational convenience
+* Studies in comparable cities indicate that the infection rate ranges from 0.05 to 0.20, with an average of 0.10
+* There are infinitely many candidates and we use one that is _analytically tractable_ for computational convenience
     + assume $p(\theta)$ is $\mathrm{beta}(a,b)$
     + $a$ and $b$ are called _hyperparameters_
-    
+
+----
+
+
 ```{r betaplot, echo=FALSE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 require(ggplot2)
 x <- seq(0, 1, 0.001)
@@ -184,7 +187,7 @@ p
 
 * We select $a=5$ and $b=45$ so that 
     + $E[\theta] = \frac{a}{a+b} =$ `r a <- 5; b <- 45; a/(a+b)`
-    + $\mathrm{mode}[\theta] = \frac{a-1}{a+b-2} =$ `r (a-1)/(a+b-2)`
+    + $\mbox{mode}[\theta] = \frac{a-1}{a+b-2} =$ `r (a-1)/(a+b-2)`
     + $P(\theta\in(0.05, 0.20)) =$ `r pbeta(0.20, a, b) - pbeta(0.05, a, b)`
     
 ```{r betaplot2, echo=FALSE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
@@ -260,8 +263,8 @@ require(hdrcde)
 hdr_bounds <- as.vector(hdr(rbeta(1e5, a, b), prob=95)$hdr)
 ```
 
-    + $E[\theta|Y=10] = $ `r  a / (a + b)`
-    + $\mathrm{mode}[\theta|Y=10] = $ `r (a - 1) / (a + b - 2)`    
+    + $E[\theta|Y=10] =$ `r  a / (a + b)`
+    + $\mathrm{mode}[\theta|Y=10] =$ `r (a - 1) / (a + b - 2)`    
     + 95% confidence interval is (`r hdr_bounds[1]`, `r hdr_bounds[2]`), i.e.
     $$P(\theta \in(`r hdr_bounds[1]`, `r hdr_bounds[2]`) | Y=10) =  95\%$$
 
@@ -271,7 +274,7 @@ hdr_bounds <- as.vector(hdr(rbeta(1e5, a, b), prob=95)$hdr)
 * No prior information is needed
 * Point estimate: $\hat\theta = \frac{Y}{n}$
 * 95% confidence interval is $\hat\theta \pm 1.96\sqrt{\frac{\hat\theta(1-\hat\theta)}{n}}$
-    + With $Y=10$, it is $(`r 0.5 - 1.96 * 0.5 / sqrt(20)`, `r 0.5 + 1.96 * 0.5 / sqrt(20)`)$, much _wider_ than the Bayesian counterparty
+    + With $Y=10$, it is $(`r 0.5 - 1.96 * 0.5 / sqrt(20)`, `r 0.5 + 1.96 * 0.5 / sqrt(20)`)$, much _wider_ than the Bayesian counterpart
     + _Prior information helps reduce uncertainty!_ 
 
 
@@ -431,7 +434,7 @@ p
 * The predictive distribution does not depend on any unknown quantities
     + It is calculated by "integrating out" the uncertainty about $\theta$
 * $\tilde Y$ is not independent of $Y$
-    + $Y$ gives information about $\theta$, which in turn gives informationa bout $\tilde Y$
+    + $Y$ gives information about $\theta$, which in turn gives information about $\tilde Y$
 
 
 
@@ -439,14 +442,14 @@ p
 
 ### Confidence Regions
 
-* Regions of the parameter space that cotains the true value of the parameter with high probability
-    + After observing the data $Y = y$, construct an interval $[l(y), u(y)]$ such that $P(l(y)<\theta<u(y))$ is large 
+* Regions of the parameter space that contains the true value of the parameter with high probability
+    + After observing the data $Y$, construct an interval $[l(Y), u(Y)]$ such that $P(l(Y)<\theta<u(Y))$ is large 
     
 
 ----
     
-* _Bayesian coverage_: an interval $[l(y),u(y)]$ has $100(1-\alpha)\%$ Bayesian coverage for $\theta$ if, _after_ the data are observed,
-$$P(l(y)<\theta<u(y)|Y=y) = 1-\alpha$$
+* _Bayesian coverage_: an interval $[l(Y),u(Y)]$ has $100(1-\alpha)\%$ Bayesian coverage for $\theta$ if, _after_ the data are observed,
+$$P(l(Y)<\theta<u(Y)|Y) = 1-\alpha$$
 * _Frequentist coverage_: a random interval $[l(Y),u(Y)]$ has $100(1-\alpha)\%$ frequentist coverage for $\theta$ if, _before_ the data are observed,
 $$P(l(Y)<\theta<u(Y)|\theta) = 1-\alpha$$
 * In a sense, the frequentist and Bayesian notions of coverage describe pre- and post-experimental coverage, respectively.
@@ -455,12 +458,16 @@ $$P(l(Y)<\theta<u(Y)|\theta) = 1-\alpha$$
 
 ### Quantile-based Intervals
 
-* Remove both tails of $\alpha/2$ probabilitiy
+* Remove both tails of $\alpha/2$ probability
 * Use $[\theta_{\alpha/2}, \theta_{1-\alpha/2}]$, where $\theta_{\alpha/2}$ and $\theta_{1-\alpha/2}$ are posterior quantiles 
-$$P(\theta < \theta_{\alpha/2}|Y=y) = P(\theta > \theta_{1-\alpha/2}|Y=y) =\alpha/2$$
-
+$$P(\theta < \theta_{\alpha/2}|Y) = P(\theta > \theta_{1-\alpha/2}|Y) =\alpha/2$$
 
 * Easy to implement
+
+
+----
+
+
 ``` {r ci, echo=TRUE, message=FALSE, cache=TRUE, tidy=FALSE}  
 a <- 5; b <- 45; n <- 20; Y <- 10; 
 qbeta(c(0.025, 0.975), a + Y, b + n - Y)
@@ -484,17 +491,16 @@ p
 
 * If the posterior distribution is not _symmetric_, a quantile-based interval excludes some points that have higher density than some points inside the interval
 
-* _HPD region_: a subset of the parameter space $s(y)$ such that
-    1. $P(\theta\in s(y)|Y=y) = 1-\alpha$
-    2. $p(\theta_1|Y=y) > p(\theta_2|Y=y)$ for $\theta_1\in s(y)$ and $\theta_2\notin s(y)$
+* _HPD region_: a subset of the parameter space $s(Y)$ such that
+    1. $P(\theta\in s(Y)|Y) = 1-\alpha$
+    2. $p(\theta_1|Y) > p(\theta_2|Y)$ for $\theta_1\in s(Y)$ and $\theta_2\notin s(Y)$
 
-* May not be an interval if the posterial density is _multimodal_, i.e. has multiple peaks 
+* May not be an interval if the posterior density is _multimodal_, i.e. has multiple peaks 
 
-
+* Harder to implement: usually apply simulation to approximate
 
 ----
 
-* Harder to implement: usually apply simulation to approximate
 ``` {r hdr, echo=TRUE, message=FALSE, cache=TRUE, tidy=FALSE}
 a <- 5; b <- 45; n <- 20; Y <- 10;
 require(hdrcde)
@@ -520,7 +526,9 @@ p
 * Likelihood: $Y|\theta \sim \mathrm{Poisson}(\theta)$ 
 $$p(Y|\theta) = \frac{\theta^Ye^{-\theta}}{Y!}$$
     + $E[Y|\theta] = \mathrm{var}(Y|\theta) = \theta$
-    
+
+----
+
 ```{r poisplot, echo=FALSE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 x <- seq(0, 20)
 theta <- c(2, 5, 10)
@@ -550,6 +558,8 @@ p
     + $a$ is the shape parameter and $b$ is the rate parameter
 $$p(\theta) = \frac{b^a}{\Gamma(a)}\theta^{a-1}e^{-b\theta}$$
     + $E[\theta] = \frac{a}{b}$
+
+----
 
 ```{r gammaplot, echo=FALSE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 x <- seq(0, 10, 0.001)
@@ -614,12 +624,9 @@ $$
 =& \frac{\Gamma(a+Y+k)}{\Gamma(k+1)\Gamma(a+Y)}\left(\frac{b+1}{b+2}\right)^{a+Y}\left(\frac{1}{b+2}\right)^k
 \end{align*}$$
 
-
+* So $\tilde Y|Y$ has a negative binomial distribution with "number of failures" $a+Y$ and "success probability" $\frac{1}{b+2}$
 
 ----
-
-
-* So $\tilde Y|Y$ has a negative binomial distribution with "number of failures" $a+Y$ and "success probability" $\frac{1}{b+2}$
 
 ```{r pred_dist2, echo=TRUE, message=FALSE, cache=TRUE, tidy=FALSE}
 a <- 2; b <- 1; Y <- 5; 
@@ -689,11 +696,11 @@ $$p(\theta|Y_1,\ldots,Y_n)\propto e^{(\alpha+\sum_{i=1}^nt(Y_i))\phi(\theta)+(\b
 $$p(y|\mu, \sigma^2) =\frac{1}{\sqrt{2\pi\sigma^2}}\textstyle\exp\left(-\frac{(y-\mu)^2}{2\sigma^2}\right),\quad -\infty < y < \infty$$
 
 
-----
-
-* the distribution is symmetric about $\theta$, and the mode, median and mean are all equal to $\theta$
+* symmetric about $\mu$, and the mode, median and mean are all equal to $\mu$
 
 * about 95% of the population lies within two standard deviations of the mean (more precisely, 1.96 standard deviations)
+
+----
 
 ```{r normplot, echo=FALSE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 x <- seq(0, 10, 0.001)
@@ -719,12 +726,12 @@ p
 
 ## Inference on Mean with Known Variance
 
-* Choose a normal prior on the mean, i.e. $\mu\sim \mathrm{normal}(\mu_0, \tau_0)$
+* Choose a normal prior on the mean, i.e. $\mu\sim \mathrm{normal}(\mu_0, \tau_0^2)$
 $$
 \begin{align*}
 p(\mu|Y, \sigma^2) & = \frac{p(\mu|\sigma^2)p(Y|\mu,\sigma^2)}{p(Y|\sigma^2)} 
 \propto p(\mu|\sigma^2) p(Y|\mu,\sigma^2) \\
-&\propto \textstyle \exp\left(-\frac{(\mu-\mu_0)^2}{2\tau_0}\right)\exp\left(-\frac{(Y-\mu)^2}{2\sigma^2}\right) 
+&\propto \textstyle \exp\left(-\frac{(\mu-\mu_0)^2}{2\tau_0^2}\right)\exp\left(-\frac{(Y-\mu)^2}{2\sigma^2}\right) 
 \end{align*}$$
 * The exponent is quadratic in $\mu$ so $p(\mu|Y,\sigma^2)$ is normal with mean 
 $$ \frac{\frac{1}{\tau_0^2}\mu_0+\frac{1}{\sigma^2}Y}{\frac{1}{\tau_0^2}+\frac{1}{\sigma^2}}$$
@@ -814,7 +821,7 @@ $$p(\mu,\sigma^2|Y_1,\ldots,Y_n) \propto p(Y_1,\ldots,Y_n| \mu,\sigma^2)p(\mu,\s
 $$p(\mu,\sigma^2) = p(\mu|\sigma^2)p(\sigma^2)$$
 * We have seen that if $\sigma^2$ were known, then a conjugate prior on $\mu$ is normal so we set $p(\mu|\sigma^2)$ as normal
 
-* We need a distribution that has support on $(0, \infty)$ for $\sigma^2$ and it turns out Gamma distribution is a crutial element 
+* We need a distribution that has support on $(0, \infty)$ for $\sigma^2$ and it turns out Gamma distribution is a crucial element 
 
 
 ----
@@ -848,7 +855,6 @@ $$
 and 
 $s^2$ is the sample variance of $Y_1,\ldots,Y_n$
 
-* $\nu_0\sigma_0^2$ and $\nu_n\sigma_n^2$ can be interpreted as prior and posterior "sum of squared observations from the sample mean"
 
 ----
 
@@ -880,6 +886,9 @@ $$
 \{\sigma^{-2}|Y_1,\ldots,Y_n\} & \sim \mathrm{gamma}(`r nu_n/2`,`r nu_n * sigma_n^2/2`), 
 \end{align*}
 $$
+
+
+----
 
 ```{r norm_joint_infer_plot, warning=FALSE, echo=FALSE, fig.width=9, fig.height=7, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 
@@ -942,6 +951,9 @@ grid.arrange(dens_mu, empty, dens2d, dens_sigma2, ncol=2, nrow=2, widths=c(4, 1.
 
 * As expected, the uncertainty about the posterior distribution of $\mu$ is larger when assuming $\sigma^2$ is unknown
 
+-----
+
+
 ```{r var_whehter_known, echo=FALSE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 x <- seq(1, 3, 0.001)
 df1 <- data.frame(param=as.factor('known'),
@@ -989,7 +1001,7 @@ p
 
 + One runs simulations many times to obtain the information of an unknown probabilistic entity
 
-+ Mordern version of MC was invented by Stanislaw Ulam in late 1940s, while he was working on nuclear weapons projects at the Los Alamos National Laboratory
++ Modern version of MC was invented by Stanislaw Ulam in late 1940s, while he was working on nuclear weapons projects at the Los Alamos National Laboratory
 
 
 
@@ -1092,7 +1104,10 @@ mean(X^2+4*X*sin(X))
 
 + Clearly, the estimation error decreases as the number of replications $n$  increases 
 + But can we quantify the error for a given $n$? 
-+ Back to the previous exmaple, plot the error against $n$
++ Back to the previous example, plot the error against $n$
+
+-----
+
 
 ```{r MC_errors, echo=FALSE,  fig.cap='', message=FALSE, cache=TRUE, fig.width=10, fig.height=6, fig.align='center'}
 
@@ -1139,7 +1154,7 @@ $$\frac{\bar{h}_n - \mathbb{E}[h(X)]}{\sqrt{\mathrm{Var(h(X))}}}\Rightarrow \mat
 
 + Use computer to repeatedly produce samples from the target distribution so that the empirical distribution can approximate the true distribution
 
-
+-----
 
 ```{r MC_intro_params, echo=FALSE, message=FALSE, cache=TRUE}
 mu <- c(-5, 0, 3)
@@ -1193,7 +1208,7 @@ p
 
 + Monte Carlo simulation is fundamentally based on the production of uniform random variables between 0 and 1
 
-+ Computed-generated uniform random variables are product of a _deterministic_ algorithm and not truely random
++ Computed-generated uniform random variables are product of a _deterministic_ algorithm and not truly random
     + Given the algorithm and the _seed_, all the subsequent numbers are known with certainty
     + However, without these knowledge, they do _appear_ to be random and can pass various statistical tests 
     + So they're called _pseudo-random_ numbers
@@ -1302,25 +1317,7 @@ system.time(rnorm(N, mean=0, sd=1))
 ## Acceptance-rejection Method
 
 + **Idea**: if the target distribution is difficult or impossible to directly simulate, then we simulate a simpler distribution and accept only part of the samples based on certain criteria
-    
-    
-----
 
-Given a target density $f$, find a density $g$ and a constant $M>0$ such that 
-$$f(x) \leq M g(x)$$
-for all $x$ on the support of $f$
-
-1. Generate $X$ from $g$ and $U$ from Uniform[0,1]
-2. If $U\leq \frac{f(X)}{Mg(X)}$, accept $X$ 
-3. Otherwise, reject $X$ and return to step 1
-
-----
-
-### Illustration
-
-+ Generate a random point $(X, Mg(X))$ in the region below the function $Mg(x)$ 
-    + $X$ follows density $g$
-+ Accept such a point if and only if it is below the function $f(x)$
 
 ```{r ar, echo=FALSE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 require(reshape2)
@@ -1344,12 +1341,31 @@ df <- data.frame(x=x, f=f, g=g)
 p <- ggplot(melt(df, id.vars='x'), aes(x=x, y=value, color=variable)) + geom_line(size=2) + scale_color_manual(name='', breaks=c('f', 'g'), labels=c('f(x)', 'M g(x)'), values=colors[1:2])
 
 df <- data.frame(x=x, accept=f, reject=g-f)
-p <- p + geom_area(data=melt(df, id.vars='x'), aes(x=x, y=value, fill=variable), color=element_blank(), position='stack', alpha=0.4) + scale_fill_manual(name='', breaks=c('accept', 'reject'), values=colors[1:2])
+p <- p + geom_area(data=melt(df, id.vars='x'), aes(x=x, y=value, fill=variable), color=element_blank(), position='stack', alpha=0.4) + guides(fill=FALSE) + scale_fill_manual(values=colors[1:2])
 p <- p + annotate('text', x=c(0, -3), y=c(0.04, 0.12), label=c('accept', 'reject'), size=8) 
 p <- p + theme_gray(base_size=20) + labs(x='', y='')
-p 
-
+p <- p + theme(axis.ticks = element_blank(), axis.text = element_blank())
+p <- p + theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+p
 ```
+
+
+----
+
+Given a target density $f$, find a density $g$ and a constant $M>0$ such that 
+$$f(x) \leq M g(x)$$
+for all $x$ on the support of $f$
+
+1. Generate $X$ from $g$ and $U$ from Uniform[0,1]
+2. If $U\leq \frac{f(X)}{Mg(X)}$, accept $X$ 
+3. Otherwise, reject $X$ and return to step 1
+
+
+
++ Generate a random point $(X, Mg(X))$ in the region below the function $Mg(x)$ 
+    + $X$ follows density $g$
++ Accept such a point if and only if it is below the function $f(x)$
+
 
 -----
 
@@ -1606,6 +1622,7 @@ For $t=1,\ldots,T$, when at $(x^{(t)}, u^{(t)})$ simulate
 
 Then, $\{x^{(t)}:t=1,\ldots,T\}$ are samples generated from $f(x)$
 
+----
 
 ```{r slice_sampler_plot_1, echo=FALSE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 require(RColorBrewer)
@@ -1709,14 +1726,12 @@ p
 
 -----
 
-``` {r slice_example_plot_2, echo=4:9, tidy=TRUE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
+``` {r slice_example_plot_2, echo=4:7, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 
 require(RColorBrewer)
 colors <- brewer.pal(9, 'Set1')
 
-T <- 10^4
-x <- rep(1, T)
-y <- rep(0.1, T)
+T <- 10^4; x <- rep(1, T); y <- rep(0.1, T);
 for (t in 1:(T-1)){
     y[t+1] <- runif(1, 0, exp(-sqrt(x[t]))/2)
     x[t+1] <- runif(1, 0, (log(2*y[t+1]))^2)
@@ -1776,14 +1791,12 @@ p
 
 -----
 
-``` {r slice_example_plot_4, echo=4:9, tidy=TRUE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center', warning=FALSE}
+``` {r slice_example_plot_4, echo=4:7, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center', warning=FALSE}
 
 require(RColorBrewer)
 colors <- brewer.pal(9, 'Set1')
 
-T <- 10^4
-x <- rep(0.25, T)
-y <- rep(0.0025, T)
+T <- 10^4; x <- rep(0.25, T); y <- rep(0.0025, T);
 for (t in 1:(T-1)){    
     y[t+1] <- runif(1, 0, exp(-(x[t]+3)^2/2))
     x[t+1] <- runif(1, 0, min(1, sqrt(-2*log(y[t+1]))-3))
@@ -1935,6 +1948,7 @@ accept_count / N ## acceptance rate for A-R is 0.7602
     + A-R is exact, while MH needs the Markov chain to converge to the target distribution and any finite sample is merely an approximation
     + "Penalty for being lazy!"
 
+-----
 
 ```{r indMH_example_plot, echo=FALSE, fig.width=10, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 require(RColorBrewer)
@@ -1977,7 +1991,7 @@ p
 
 For $t=1,\ldots, T$, when at $x^{(t)}$
 
-1. Simulate $y_t \sim g(y - x^{(t)}) $
+1. Simulate $y_t \sim g(y - x^{(t)})$
 
 2. Simulate $U\sim \mathrm{Uniform}(0,1)$ and take
 $$x^{(t+1)} = \left\{
@@ -1994,7 +2008,7 @@ x^{(t)}, & \mbox{otherwise.}
 ### Remarks
 
 + Given a proposed candidate $y_t$, its acceptance probability is independent of $g$
-+ However, the overal acceptance rate of the algorithm does depend on $g$
++ However, the overall acceptance rate of the algorithm does depend on $g$
     + It determines how the algorithm explores the state space to propose candidates   
 
 
@@ -2125,7 +2139,7 @@ Though the acceptance rate is lower, we get a better histogram for a larger valu
 + A criterion is the acceptance rate
     + It can be easily estimated by the empirical frequency of acceptance
 
-+ In contrast to the A-R method, maximizing the acceptance rate is not neccesarily the best, especially for random walk MH
++ In contrast to the A-R method, maximizing the acceptance rate is not necessarily the best, especially for random walk MH
 
 
 -----
@@ -2220,7 +2234,7 @@ do.call("grid.arrange", c(traceplot, ncol=k))
 
 + Proposed by S. Geman and D. Geman in 1984 
 
-+ Named after the physicist J. Gibbs in reference to an analogy between the algotirhm and statistical physics
++ Named after the physicist J. Gibbs in reference to an analogy between the algorithm and statistical physics
 
 + Used to simulate a *multivariate* distribution
     + Decompose joint distribution into a sequence of one-dimensional conditional distributions
@@ -2274,7 +2288,7 @@ for (t in 1:(N-1)){
 }
 ```
 
-```{r Gibbs_example_plot, echo=FALSE, fig.width=7, fig.height=7, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
+```{r Gibbs_example_plot, echo=FALSE, fig.width=6, fig.height=6, fig.cap='', message=FALSE, cache=TRUE, fig.align='center'}
 require(dplyr)
 
 df <- data.frame(x=x, y=y)

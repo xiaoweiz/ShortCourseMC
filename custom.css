@@ -10,11 +10,6 @@
 </script>
 
 <style type="text/css">
-    /*.reveal h1 { font-size: 2.0em; }
-    .reveal h2 { font-size: 1.75em; }
-    .reveal h3 { font-size: 1.5em; }
-    .reveal h4 { font-size: 1.0em; }*/
-
     .reveal h1 { font-size: 1.6em; }
     .reveal h2 { font-size: 1.3em; }
     .reveal h3 { font-size: 1.2em; }
@@ -38,19 +33,4 @@
         background: none;*/
         padding: 6px;
     }
-    .reveal code,
-    .reveal .sourceCode code,
-    /*.reveal .sourceCode .ot {
-        color: #61FF0D;
-    }
-    .reveal .sourceCode .dv,
-    .reveal .sourceCode .st {
-        color: #FFFC19;
-    }
-    .reveal .sourceCode .fu {
-        color: #FF530D;
-    }
-    .reveal .sourceCode .co {
-        color: #71E9F4;
-    }*/
 </style>
